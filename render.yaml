@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: skillmatch-api
+    runtime: go
+    rootDir: backend
+    buildCommand: go build -o server .
+    startCommand: ./server
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        sync: false
+      - key: UPLOAD_DIR
+        value: /var/data/uploads
+    # Persistent disks require a paid service; keep profile photos across deploys.
+    disk:
+      name: skillmatch-uploads
+      mountPath: /var/data
+      sizeGB: 1

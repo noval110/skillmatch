@@ -2,6 +2,8 @@
 .env
 backend/.env
 frontend/.env
+.env.*
+!.env.example
 
 # Node
 node_modules/
@@ -11,6 +13,7 @@ frontend/dist/
 # Go cache/build
 .gocache/
 backend/.gocache/
+backend/server
 *.exe
 *.test
 *.out
@@ -22,3 +25,4 @@ backend/.gocache/
 .vscode/
 .DS_Store
 Thumbs.db
+.neon

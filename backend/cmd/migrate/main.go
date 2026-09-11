@@ -12,5 +12,5 @@ func main() {
 	if err := database.Migrate(context.Background(), pool); err != nil {
 		log.Fatal(err)
 	}
-	log.Println("SkillMatch additive migrations applied (beginner matching and multi-competition catalog)")
+	log.Println("SkillMatch migrations applied (base schema, beginner matching, and multi-competition catalog)")
 }

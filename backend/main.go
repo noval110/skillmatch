@@ -17,6 +17,10 @@ import (
 func main() {
 	conn := database.Connect()
 	defer conn.Close()
+	config, err := serverConfigFromEnv()
+	if err != nil {
+		log.Fatal(err)
+	}
 	if err := database.Migrate(context.Background(), conn); err != nil {
 		log.Fatal("Database migration failed: ", err)
 	}
@@ -29,10 +33,7 @@ func main() {
 	e.Static("/uploads", uploadDir)
 
 	e.Use(echomiddleware.CORSWithConfig(echomiddleware.CORSConfig{
-		AllowOrigins: []string{
-			"http://localhost:5173",
-			"http://127.0.0.1:5173",
-		},
+		AllowOrigins: config.allowedOrigins,
 		AllowMethods: []string{
 			http.MethodGet,
 			http.MethodPost,
@@ -195,5 +196,5 @@ func main() {
 		return handlers.UpdateProfile(c, conn)
 	}, authmiddleware.AuthMiddleware)
 
-	e.Logger.Fatal(e.Start(":8080"))
+	e.Logger.Fatal(e.Start(":" + config.port))
 }

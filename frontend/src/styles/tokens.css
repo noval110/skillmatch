@@ -1,0 +1,74 @@
+/* SkillMatch is dark-only. All interface colors are defined here. */
+:root {
+  color-scheme: dark;
+  --bg: #0b0f14;
+  --bg-secondary: #11161d;
+  --background: var(--bg);
+  --sidebar: #10151c;
+  --surface: #151b23;
+  --surface-hover: #1b222c;
+  --surface-soft: #171e27;
+  --chip: #202731;
+  --track: #262e39;
+
+  --primary: #8f1d2c;
+  --primary-hover: #a42336;
+  --primary-dark: #6e1521;
+  --primary-soft: rgba(143, 29, 44, .16);
+  --primary-softer: rgba(143, 29, 44, .08);
+  --primary-border: #66313e;
+  --accent-text: #f09baa;
+  --progress-fill: #c84b63;
+  --focus-ring: rgba(240, 155, 170, .22);
+  --decoration: rgba(143, 29, 44, .18);
+
+  --text: #f3f4f6;
+  --text-dark: var(--text);
+  --text-secondary: #aab2bf;
+  --muted: #8c96a6;
+  --placeholder: #8b95a5;
+  --on-primary: #fff5f7;
+  --chip-text: #d7dce3;
+  --border: #2a313c;
+  --border-soft: #202731;
+  --border-hover: #475362;
+  --sidebar-border: #252c36;
+
+  --success: #32c48d;
+  --success-soft: rgba(50, 196, 141, .12);
+  --warning: #f2b84b;
+  --warning-soft: rgba(242, 184, 75, .12);
+  --danger: #e05a67;
+  --danger-soft: rgba(224, 90, 103, .12);
+  --overlay: rgba(0, 0, 0, .65);
+  --nav-glass: rgba(17, 22, 29, .94);
+  --shadow: 0 12px 30px rgba(0, 0, 0, .24);
+  --shadow-color: rgba(0, 0, 0, .24);
+  --shadow-strong: rgba(0, 0, 0, .45);
+  --scrollbar: #333b47;
+  --scrollbar-hover: #444e5b;
+  --skeleton: #202731;
+  --skeleton-highlight: #2a333f;
+
+  --hero-gradient: linear-gradient(135deg, rgba(143, 29, 44, .20), rgba(21, 27, 35, .95));
+  --illustration-gradient: linear-gradient(145deg, #271923, #171b24 65%, #211822);
+  --cta-gradient: linear-gradient(135deg, #36151f, #6e1521);
+  --footer-gradient: linear-gradient(145deg, #11131a, #1d121a);
+  --cover-gradient: linear-gradient(135deg, #491724, #8f1d2c);
+  --section-gradient: linear-gradient(135deg, var(--surface), var(--surface-soft));
+
+  --category-technology: #abc4e1;
+  --category-technology-soft: rgba(120, 163, 211, .10);
+  --category-academic: #c6b8e4;
+  --category-academic-soft: rgba(169, 146, 208, .10);
+  --category-business: #dfc18a;
+  --category-business-soft: rgba(206, 170, 107, .10);
+  --category-research: #95cfc1;
+  --category-research-soft: rgba(109, 185, 166, .10);
+  --category-creative: #ddaec4;
+  --category-creative-soft: rgba(206, 137, 169, .10);
+  --category-design: #dfb79a;
+  --category-design-soft: rgba(206, 156, 121, .10);
+  --category-esports: #c7b5e3;
+  --category-esports-soft: rgba(169, 140, 208, .10);
+}
