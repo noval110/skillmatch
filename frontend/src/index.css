@@ -845,13 +845,112 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 .settings-theme-note { padding: 12px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface-soft); color: var(--text-secondary); font-size: 12px; }
 .skeleton-avatar, .skeleton-lines i { background-image: linear-gradient(90deg, var(--skeleton) 25%, var(--skeleton-highlight) 45%, var(--skeleton) 65%); }
 
-/* The approved raster files remain unfiltered and unchanged, framed as artwork. */
+/* Presentation only: retain the approved rasters and their original colors. */
 .auth-visual, .create-team-visual { background: var(--illustration-gradient); border-color: var(--border); }
 .dashboard-hero { background: var(--hero-gradient); border-color: var(--primary-border); border-radius: 14px; }
-.dashboard-hero > .approved-asset { align-self: center; width: calc(100% - 32px); margin: 16px; border: 1px solid var(--border-hover); border-radius: 14px; }
-.auth-visual > .approved-asset { border: 1px solid var(--border-hover); border-radius: 16px; background: var(--surface); }
-.create-team-visual .approved-asset { width: calc(100% - 32px); margin: 16px; border: 1px solid var(--border-hover); border-radius: 14px; background: var(--surface); }
-.my-team-illustration { padding: 12px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface-soft); }
+.approved-asset:is(.approved-asset-dashboard, .approved-asset-login, .approved-asset-register, .approved-asset-createTeam, .approved-asset-emptyTeam) {
+  isolation: isolate;
+  flex-shrink: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 22px;
+  background: transparent;
+  box-shadow: none;
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, .25));
+  /* Feather only the perimeter; faces and gestures stay in the opaque center. */
+  -webkit-mask-image: var(--art-mask, radial-gradient(ellipse 54% 60% at 50% 52%, #000 62%, #000 70%, transparent 100%)), linear-gradient(to bottom, transparent, #000 16%, #000 80%, transparent), linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  mask-image: var(--art-mask, radial-gradient(ellipse 54% 60% at 50% 52%, #000 62%, #000 70%, transparent 100%)), linear-gradient(to bottom, transparent, #000 16%, #000 80%, transparent), linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+.auth-visual {
+  padding: clamp(28px, 4vw, 64px);
+  gap: 24px;
+  background: radial-gradient(ellipse at 50% 48%, rgba(143, 29, 44, .18), transparent 65%), linear-gradient(145deg, #271923, #1c1720 65%, #291923);
+}
+.auth-visual > .approved-asset {
+  width: min(100%, 460px);
+  height: auto;
+  margin: 0 auto;
+  aspect-ratio: 1.5;
+}
+.auth-visual > .approved-asset img {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  object-position: center bottom;
+  transform: none;
+}
+.auth-visual > .approved-asset-register {
+  width: min(100%, 430px);
+  aspect-ratio: 1.4;
+  --art-mask: radial-gradient(ellipse 55% 65% at 50% 48%, #000 65%, #000 72%, transparent 100%);
+}
+.dashboard-hero {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 500px);
+  align-items: center;
+  background: radial-gradient(ellipse at 78% 54%, rgba(143, 29, 44, .16), transparent 65%), var(--hero-gradient);
+}
+.dashboard-hero > .approved-asset {
+  align-self: center;
+  justify-self: center;
+  width: min(100%, 500px);
+  height: auto;
+  aspect-ratio: 2;
+  margin: 12px 0;
+}
+.dashboard-hero > .approved-asset img {
+  top: 0;
+  right: 0;
+  left: auto;
+  width: auto;
+  height: 100%;
+  max-width: none;
+  object-fit: contain;
+}
+.create-team-visual {
+  justify-content: center;
+  padding: 24px 12px;
+  background: radial-gradient(ellipse at center, rgba(143, 29, 44, .16), transparent 65%);
+}
+.create-team-visual .approved-asset {
+  width: min(100%, 420px);
+  height: auto;
+  margin: 0;
+}
+.my-team-illustration {
+  width: min(400px, 100%);
+  height: auto;
+  margin-inline: auto;
+}
+.my-team-empty {
+  background: radial-gradient(ellipse 260px 170px at 50% 130px, rgba(143, 29, 44, .16), transparent 70%);
+}
+@media (max-width: 1100px) {
+  .dashboard-hero { grid-template-columns: minmax(0, 1fr) minmax(0, .9fr); }
+}
+@media (max-width: 900px) {
+  .dashboard-hero { grid-template-columns: 1fr; }
+  .dashboard-hero > .approved-asset { display: block; width: min(420px, 100%); margin: 0 auto 16px; }
+  .create-team-visual { display: flex; min-height: 0; padding: 0 20px 20px; }
+  .create-team-visual .approved-asset { max-width: 320px; }
+}
+@media (max-width: 768px) {
+  .auth-form-section { min-height: auto; padding-block: 40px 24px; }
+  .auth-visual { display: flex; padding: 20px 24px 32px; gap: 12px; border-left: 0; }
+  .auth-visual > .approved-asset { width: min(280px, 100%); }
+  .auth-visual-copy p { max-width: 300px; }
+  .dashboard-hero > .approved-asset { max-width: 350px; margin-bottom: 12px; }
+  .my-team-illustration { max-width: 320px; }
+}
+@media (max-width: 420px) {
+  .dashboard-hero-copy > div { flex-wrap: wrap; }
+  /* Keep the illustrated pages within narrow screens, including their controls. */
+  :is(.dashboard-page, .create-team-page, .my-team-page) .topbar { flex-wrap: wrap; padding-left: 72px; }
+  :is(.dashboard-page, .create-team-page, .my-team-page) .topbar-actions { min-width: 0; max-width: 100%; flex-wrap: wrap; }
+}
 .profile-identity { background: var(--surface); border-color: var(--border); }
 .profile-cta { background: var(--cta-gradient); }
 .profile-cta .button { background: var(--primary); color: var(--on-primary); border-color: var(--primary-border); }
