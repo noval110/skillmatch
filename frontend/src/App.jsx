@@ -9,6 +9,9 @@ import LandingPage from './pages/LandingPage'
 import Login from './pages/Login'
 import MyTeam from './pages/MyTeam'
 import Profile from './pages/Profile'
+import Notifications from './pages/Notifications'
+import Messages from './pages/Messages'
+import PublicProfilePage from './pages/PublicProfilePage'
 import Register from './pages/Register'
 import Settings from './pages/Settings'
 import TeamDetail from './pages/TeamDetail'
@@ -28,6 +31,10 @@ export default function App() {
         <Route path="/my-team" element={<MyTeam />} />
         <Route path="/join-requests" element={<JoinRequests />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/notifications" element={<Notifications />} />
+        <Route path="/messages" element={<Messages />} />
+        <Route path="/messages/:conversationId" element={<Messages />} />
+        <Route path="/users/:id" element={<PublicProfilePage />} />
         <Route path="/settings" element={<Settings />} />
       </Route>
     </Route>

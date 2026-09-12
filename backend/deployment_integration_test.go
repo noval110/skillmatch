@@ -93,6 +93,14 @@ func TestDeploymentStartupIntegration(t *testing.T) {
 	if !ready {
 		t.Fatal("server did not become healthy with environment-only configuration")
 	}
+	profileResponse, err := client.Get(fmt.Sprintf("http://127.0.0.1:%d/api/users/1/profile", port))
+	if err != nil {
+		t.Fatal(err)
+	}
+	profileResponse.Body.Close()
+	if profileResponse.StatusCode != http.StatusUnauthorized {
+		t.Fatalf("public profile route must be registered and protected, got %d", profileResponse.StatusCode)
+	}
 	for _, test := range []struct {
 		origin string
 		allow  bool

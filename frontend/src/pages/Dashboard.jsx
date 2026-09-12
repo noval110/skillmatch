@@ -1,5 +1,4 @@
 import CompetitionCategories from '../components/CompetitionCategories'
-import { diverseTeams } from '../config/competitions'
 import { Bell, Shapes, Target, Trophy, UsersRound } from 'lucide-react'
 import { useCallback } from 'react'
 import { Link } from 'react-router-dom'
@@ -9,16 +8,16 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import Navbar from '../components/Navbar'
 import SkillIcon from '../components/SkillIcon'
 import StatCard from '../components/StatCard'
-import TeamCard from '../components/TeamCard'
+import RecommendationCard from '../components/RecommendationCard'
 import useAsync from '../hooks/useAsync'
-import { getJoinRequests, getProfile, getProfileSkills, getSkills, getTeams } from '../services/api'
+import { getJoinRequests, getRecommendedTeams, getProfile, getProfileSkills, getSkills, getTeams } from '../services/api'
 import { getCurrentUserId } from '../utils/auth'
-import { hydrateTeam, loadTeamDetail } from '../utils/teams'
+import { loadTeamDetail } from '../utils/teams'
 
 export default function Dashboard() {
   const loadDashboard = useCallback(async () => {
-    const [profile, profileSkillsResponse, skillsResponse, teamsResponse] = await Promise.all([
-      getProfile(), getProfileSkills(), getSkills(), getTeams(),
+    const [profile, profileSkillsResponse, skillsResponse, teamsResponse, recommendationsResult] = await Promise.all([
+      getProfile(), getProfileSkills(), getSkills(), getTeams(), getRecommendedTeams().then(data => ({ data }), error => ({ error: error.message })),
     ])
     const profileSkills = Array.isArray(profileSkillsResponse) ? profileSkillsResponse : []
     const skills = Array.isArray(skillsResponse) ? skillsResponse : []
@@ -29,12 +28,11 @@ export default function Dashboard() {
     const ownedTeams = detailed.filter((team) => Number(team.owner_id) === userId)
     const requestGroups = await Promise.all(ownedTeams.map((team) => getJoinRequests(team.id).catch(() => [])))
     const pendingRequests = requestGroups.flat().filter((request) => request.status === 'pending').length
-    const matchedTeams = await Promise.all(detailed.map((team) => hydrateTeam(team, true)))
-    const recommended = diverseTeams(matchedTeams)
-    const bestMatch = Math.max(0, ...recommended.map((team) => Number(team.matchScore) || 0))
-    return { profile, profileSkills, skills, myTeams, pendingRequests, recommended, bestMatch }
+    const recommended = Array.isArray(recommendationsResult.data) ? recommendationsResult.data : []
+    const bestMatch = Math.max(0, ...recommended.map((team) => Number(team.match_score) || 0))
+    return { profile, profileSkills, skills, myTeams, pendingRequests, recommended, bestMatch, recommendationError: recommendationsResult.error }
   }, [])
-  const { data, loading, error } = useAsync(loadDashboard)
+  const { data, loading, error, reload } = useAsync(loadDashboard)
   if (loading) return <LoadingSpinner label="Menyiapkan dashboard..." />
 
   return (
@@ -58,7 +56,8 @@ export default function Dashboard() {
           <StatCard label="Skills" value={data?.profileSkills?.length || 0} icon={Shapes} tone="slate" />
         </section>
         <div className="section-heading dashboard-section-heading"><h2>Recommended for you</h2><Link to="/teams">View all</Link></div>
-        {data?.recommended?.length ? <div className="card-grid dashboard-team-grid">{data.recommended.map((team) => <TeamCard dashboard key={team.id} team={team} roles={team.roles} matchScore={team.matchScore} />)}</div> : <EmptyState title="Belum ada rekomendasi" description="Team baru akan muncul di sini." />}
+        {data?.recommendationError && <div className="error-message" role="alert">Recommendations unavailable: {data.recommendationError}<button className="button button-secondary" onClick={reload}>Retry</button></div>}
+        {data?.recommended?.length ? <div className="card-grid dashboard-team-grid">{data.recommended.map((recommendation) => <RecommendationCard key={recommendation.team.id} recommendation={recommendation} />)}</div> : !data?.recommendationError && <EmptyState title="Belum ada rekomendasi" description="Team baru akan muncul di sini." />}
         <section className="dashboard-lower">
           <div className="dashboard-mini-panel">
             <div className="section-heading"><h2>Explore Skills</h2></div>
@@ -66,7 +65,7 @@ export default function Dashboard() {
           </div>
           <div className="dashboard-mini-panel">
             <div className="section-heading"><h2>Recent Activity</h2></div>
-            <div className="activity-list">{data?.recommended?.slice(0, 3).map((team) => <Link to={`/teams/${team.id}`} key={team.id}><span className="avatar">{team.name?.charAt(0)}</span><span><strong>{team.name}</strong><small>Available to explore</small></span></Link>)}</div>
+            <div className="activity-list">{data?.recommended?.slice(0, 3).map(({ team }) => <Link to={`/teams/${team.id}`} key={team.id}><span className="avatar">{team.name?.charAt(0)}</span><span><strong>{team.name}</strong><small>Available to explore</small></span></Link>)}</div>
           </div>
           <aside className="profile-cta"><Trophy size={30} /><h3>Complete your profile</h3><p>Add more skills to get better team recommendations.</p><Link className="button" to="/profile">Update Profile</Link></aside>
         </section>

@@ -304,7 +304,15 @@ label.preference-checkbox small { display: block; margin-top: 3px; color: var(--
 .members-panel { position: sticky; top: 20px; }
 .member-list { display: grid; gap: 5px; margin-bottom: 18px; }
 .member-row { min-width: 0; display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
-.member-row > div:nth-child(2) { flex: 1; min-width: 0; }
+.member-row > .member-profile-link { flex: 1; min-width: 0; }
+.user-profile-link { display: flex; align-items: center; gap: 10px; min-width: 0; color: inherit; border-radius: 8px; text-decoration: none; }
+.user-profile-link > span:last-child { min-width: 0; overflow-wrap: anywhere; }
+.user-profile-link small { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; }
+.user-profile-link:hover, .user-profile-name:hover { background: var(--primary-softer); }
+.user-profile-name { color: inherit; border-radius: 4px; overflow-wrap: anywhere; }
+.user-avatar-link { display: inline-flex; flex-shrink: 0; border-radius: 50%; }
+.user-avatar-link:hover { box-shadow: 0 0 0 2px var(--primary); }
+.user-profile-link:focus-visible, .user-profile-name:focus-visible, .user-avatar-link:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
 .member-row strong { font-size: 12px; }
 .member-row p { margin-top: 3px; color: var(--muted); font-size: 10px; }
 .profile-header { display: flex; align-items: center; gap: 16px; }
@@ -401,6 +409,11 @@ label.preference-checkbox small { display: block; margin-top: 3px; color: var(--
 .notification-empty p { margin: 0; font-size: 11px; }
 .notification-mini-spinner { width: 20px; height: 20px; border: 2px solid var(--primary-border); border-top-color: var(--primary); border-radius: 50%; animation: spin .7s linear infinite; }
 .notification-list { max-height: 280px; overflow-y: auto; padding: 5px; }
+.notification-member { padding: 8px; border-radius: 7px; }
+.notification-member .user-profile-link { padding: 3px; }
+.notification-request-link { display: block; margin: 3px 0 0 44px; }
+.notification-request-link:hover { text-decoration: underline; }
+.notification-request-link small { display: block; }
 .notification-list > a { min-height: 54px; padding: 8px; display: flex; align-items: center; gap: 9px; border-radius: 7px; color: inherit; text-decoration: none; }
 .notification-list > a:hover { background: var(--primary-softer); }
 .notification-list > a > span:last-child { min-width: 0; display: grid; gap: 3px; }
@@ -787,7 +800,23 @@ a.competition-badge:hover { outline: 1px solid var(--primary-border); }
 .skill-suggestions button.selected { border-color: var(--primary-border); color: var(--accent-text); }
 .teams-filter-row.competition-filter-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 16px; }
 .competition-filter-row input, .competition-filter-row select { width: 100%; min-width: 0; }
-.role-detail .inline-form { flex-wrap: wrap; }
+.role-detail .role-skill-form { grid-template-columns: minmax(0, 1fr); gap: 16px; margin-top: 0; padding: 16px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg-secondary); }
+.role-skill-form .skill-picker { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 12px; }
+.role-skill-form .skill-suggestions, .role-skill-form .skill-picker > small { grid-column: 1 / -1; }
+.role-skill-form .skill-suggestions p { margin-bottom: 10px; line-height: 1.5; font-size: 11px; }
+.role-skill-form .skill-suggestions .tag-list { gap: 7px; }
+.role-skill-form .skill-suggestions .tag { padding: 6px 10px; min-height: 30px; font-size: 11px; white-space: normal; text-align: left; transition: background .15s, border-color .15s; }
+.role-skill-form .skill-suggestions .tag:hover { background: var(--surface-hover); border-color: var(--border-hover); }
+.role-skill-form .skill-suggestions .tag.selected { background: var(--primary-soft); border-color: var(--accent-text); }
+.role-skill-form label { display: grid; gap: 7px; min-width: 0; }
+.role-skill-form label > span { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+.role-skill-form select { height: 44px; min-width: 0; font-size: 13px; }
+.role-skill-actions { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 12px; }
+.role-skill-actions > .button { height: 44px; min-width: 96px; padding-inline: 20px; }
+@media (max-width: 480px) {
+  .role-skill-form .skill-picker { grid-template-columns: minmax(0, 1fr); }
+  .role-detail .role-skill-form { padding: 14px; }
+}
 .landing-hero-copy .competition-examples { font-size: 12px; line-height: 1.8; margin: 18px 0 10px; }
 .landing-hero-copy .competition-categories { margin-bottom: 18px; }
 @media (max-width: 600px) { .teams-filter-row.competition-filter-row { grid-template-columns: 1fr; } }

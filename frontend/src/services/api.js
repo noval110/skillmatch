@@ -43,6 +43,20 @@ export const registerUser = (name, email, password, experienceLevel) => request(
   },
 })
 export const getProfile = () => request('/profile')
+export const createConversation = (userId) => request('/conversations', { method: 'POST', body: { user_id: Number(userId) } })
+export const getConversations = (offset = 0) => request(`/conversations?offset=${offset}`)
+export const getConversation = (id) => request(`/conversations/${id}`)
+export const getMessages = (id, cursors = {}) => request(`/conversations/${id}/messages?${new URLSearchParams(cursors)}`)
+export const sendMessage = (id, body) => request(`/conversations/${id}/messages`, { method: 'POST', body })
+export const readConversation = (id, lastMessageId) => request(`/conversations/${id}/read`, { method: 'PUT', body: { last_message_id: lastMessageId } })
+export const getShowcase = () => request('/profile/showcase')
+export const saveShowcaseItem = (kind, id, body) => request(`/profile/${kind}${id ? `/${id}` : ''}`, { method: id ? 'PUT' : 'POST', body })
+export const deleteShowcaseItem = (kind, id) => request(`/profile/${kind}/${id}`, { method: 'DELETE' })
+export const getNotifications = (before) => request(`/notifications${before ? `?before=${before}` : ''}`)
+export const getNotificationCount = () => request('/notifications/unread-count')
+export const readNotification = (id) => request(`/notifications/${id}/read`, { method: 'PUT' })
+export const readAllNotifications = () => request('/notifications/read-all', { method: 'PUT' })
+export const getPublicProfile = (userId) => request(`/users/${encodeURIComponent(userId)}/profile`)
 export const updateProfile = (body) => request('/profile', { method: 'PUT', body })
 export const uploadProfilePhoto = (photo) => {
   const body = new FormData()
@@ -60,6 +74,7 @@ export const addProfileSkill = (body) => request('/profile/skills', { method: 'P
 export const updateProfileSkill = (skillId, body) => request(`/profile/skills/${skillId}`, { method: 'PUT', body })
 export const deleteProfileSkill = (skillId) => request(`/profile/skills/${skillId}`, { method: 'DELETE' })
 export const getTeams = () => request('/teams', { auth: false })
+export const getRecommendedTeams = () => request('/teams/recommended')
 export const searchTeams = (filters = {}) => {
   const params = new URLSearchParams()
   Object.entries(filters).forEach(([key, value]) => value && params.set(key, value))

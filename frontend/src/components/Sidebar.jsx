@@ -1,4 +1,4 @@
-import { Bell, Home, House, LogOut, Menu, Settings, UserRound, UsersRound, UserSearch, X } from 'lucide-react'
+import { Bell, Home, House, LogOut, Menu, MessageCircle, Settings, UserRound, UsersRound, UserSearch, X } from 'lucide-react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { logout } from '../utils/auth'
 import ApprovedAsset from './ApprovedAsset'
@@ -9,6 +9,8 @@ const links = [
   { to: '/teams', label: 'Teams', icon: UsersRound },
   { to: '/my-team', label: 'My Team', icon: UserSearch },
   { to: '/join-requests', label: 'Join Requests', icon: Bell },
+  { to: '/messages', label: 'Messages', icon: MessageCircle },
+  { to: '/notifications', label: 'Notifications', icon: Bell },
   { to: '/profile', label: 'Profile', icon: UserRound },
   { to: '/settings', label: 'Settings', icon: Settings },
 ]

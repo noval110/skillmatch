@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict'
 import fs from 'node:fs/promises'
 
-const pages = await fetch('http://127.0.0.1:9222/json').then(r => r.json())
+const pages = await fetch(process.env.CDP_URL || 'http://127.0.0.1:9222/json').then(r => r.json())
 const ws = new WebSocket(pages.find(p => p.type === 'page').webSocketDebuggerUrl)
 await new Promise(resolve => ws.addEventListener('open', resolve, { once: true }))
 let id = 0
@@ -88,13 +88,13 @@ function fixtures() {
 await cdp('Page.enable')
 await cdp('Runtime.enable')
 await cdp('Page.addScriptToEvaluateOnNewDocument', { source: `(${fixtures.toString()})()` })
-await fs.mkdir('artifacts/matching', { recursive: true })
+await fs.mkdir('../.gocache/matching', { recursive: true })
 async function screenshot(name) {
   const { data } = await cdp('Page.captureScreenshot', { format: 'png' })
-  await fs.writeFile(`artifacts/matching/${name}.png`, Buffer.from(data, 'base64'))
+  await fs.writeFile(`../.gocache/matching/${name}.png`, Buffer.from(data, 'base64'))
 }
 async function navigate(path, ready) {
-  await cdp('Page.navigate', { url: 'http://127.0.0.1:5173' + path })
+  await cdp('Page.navigate', { url: (process.env.FRONTEND_URL || 'http://127.0.0.1:5173') + path })
   await until(ready)
 }
 async function noOverflow() {
@@ -150,7 +150,7 @@ try {
   await noOverflow()
   await fill('experience_preference', 'intermediate')
   await clickText('Save Preference')
-  await until("!document.querySelector('.modal') && window.__requests.some(r => r.method === 'PUT' && r.body?.experience_preference === 'intermediate')")
+  await until("!document.querySelector('.modal') && document.querySelector('.team-hero') && window.__requests.some(r => r.method === 'PUT' && r.body?.experience_preference === 'intermediate')")
   await clickText('Edit')
   await until("document.querySelector('.modal [name=beginner_friendly]')")
   assert.equal(await evaluate("document.querySelector('.modal [name=beginner_friendly]').checked"), true)

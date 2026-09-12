@@ -34,7 +34,7 @@ export default function TeamCard({ team, roles = [], matchScore, compact = false
       <CompetitionBadge team={team} /><TeamCompatibilityBadges team={team} /><div className="team-card-meta"><span><Users size={13} />{team.members?.length || 0} / {team.max_members} members</span></div>
       <p className={`team-needs ${roleNeeds.length ? 'is-open' : ''}`}>{needsMessage}</p>
       <div className="tag-list">{skills.slice(0, 3).map((skill) => <span className="tag" key={skill}>{skill}</span>)}</div>
-      {team.members?.length > 0 && <div className="member-avatar-group">{team.members.slice(0, 3).map((member) => <Avatar name={member.name} src={resolveMediaURL(member.avatar_url)} size="tiny" key={member.id} />)}{team.members.length > 3 && <span className="avatar">+{team.members.length - 3}</span>}</div>}
+      {team.members?.length > 0 && <div className="member-avatar-group">{team.members.slice(0, 3).map((member) => <Link className="user-avatar-link" to={`/users/${member.id}`} key={member.id} aria-label={`View ${member.name}'s profile`}><Avatar name={member.name} src={resolveMediaURL(member.avatar_url)} size="tiny" /></Link>)}{team.members.length > 3 && <span className="avatar">+{team.members.length - 3}</span>}</div>}
       <MatchProgress score={matchScore} />
     </article>
   )

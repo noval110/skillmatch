@@ -50,6 +50,8 @@ func main() {
 	}))
 
 	// Health
+	handlers.RegisterCommunityRoutes(e, conn)
+
 	e.GET("/api/health", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, map[string]string{
 			"status": "ok",
@@ -73,6 +75,10 @@ func main() {
 
 	e.GET("/api/profile", func(c echo.Context) error {
 		return handlers.GetUserProfile(c, conn)
+	}, authmiddleware.AuthMiddleware)
+
+	e.GET("/api/users/:id/profile", func(c echo.Context) error {
+		return handlers.GetPublicUserProfile(c, conn)
 	}, authmiddleware.AuthMiddleware)
 
 	e.POST("/api/profile/photo", func(c echo.Context) error {

@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict'
 import fs from 'node:fs/promises'
 
-const pages = await fetch('http://127.0.0.1:9222/json').then(r => r.json())
+const pages = await fetch(process.env.CDP_URL || 'http://127.0.0.1:9222/json').then(r => r.json())
 const ws = new WebSocket(pages.find(p => p.type === 'page').webSocketDebuggerUrl)
 await new Promise(resolve => ws.addEventListener('open', resolve, { once: true }))
 let id = 0
@@ -87,6 +87,7 @@ function fixtures() {
       data = owned
     } else if (path === '/skills') data = skills
     else if (path === '/teams/search') data = teams.filter(team => (!url.searchParams.get('competition_category') || team.competition_category === url.searchParams.get('competition_category')) && (!url.searchParams.get('competition_type') || team.competition_type === url.searchParams.get('competition_type')) && (!url.searchParams.get('beginner_friendly') || team.beginner_friendly))
+    else if (path === '/teams/recommended') data = teams.slice(0, 3).map(team => ({ team, match_score: 86, recommended_role: 'Teammate', matched_skills: [], member_count: 1, reason: 'Open role', match: { match_score: 86 } }))
     else if (path === '/teams') {
       if (method === 'POST') { const team = { ...body, id: teams.length + 1, owner_id: 1 }; teams.push(team); data = { team_id: team.id } }
       else data = teams
@@ -108,13 +109,13 @@ function fixtures() {
 await cdp('Page.enable')
 await cdp('Runtime.enable')
 await cdp('Page.addScriptToEvaluateOnNewDocument', { source: `(${fixtures.toString()})()` })
-await fs.mkdir('artifacts/competitions', { recursive: true })
+await fs.mkdir('../.gocache/competitions', { recursive: true })
 async function screenshot(name) {
   const { data } = await cdp('Page.captureScreenshot', { format: 'png' })
-  await fs.writeFile(`artifacts/competitions/${name}.png`, Buffer.from(data, 'base64'))
+  await fs.writeFile(`../.gocache/competitions/${name}.png`, Buffer.from(data, 'base64'))
 }
 async function navigate(path, ready) {
-  await cdp('Page.navigate', { url: 'http://127.0.0.1:5173' + path })
+  await cdp('Page.navigate', { url: (process.env.FRONTEND_URL || 'http://127.0.0.1:5173') + path })
   await until(ready)
 }
 async function noOverflow() {
@@ -133,8 +134,8 @@ try {
   assert.equal(await evaluate("document.querySelector('#login-password').required"), true)
   await navigate('/register', "document.querySelector('#register-name')")
   assert.equal(await evaluate("document.querySelector('#experience-level').options.length"), 3)
-  await navigate('/dashboard', "document.querySelectorAll('.dashboard-team-card').length === 3")
-  assert.equal(await evaluate("new Set([...document.querySelectorAll('.dashboard-team-card .competition-category')].map(el => el.textContent)).size"), 3)
+  await navigate('/dashboard', "document.querySelectorAll('.recommendation-card').length === 3")
+  assert.equal(await evaluate("new Set([...document.querySelectorAll('.recommendation-card .competition-category')].map(el => el.textContent)).size"), 3)
   await screenshot('dashboard-desktop'); await noOverflow()
   await navigate('/profile', "document.querySelector('.profile-skill-groups')")
   assert.equal(await evaluate("document.querySelectorAll('.profile-skill-groups h3').length"), 3)
@@ -196,7 +197,7 @@ try {
   await cdp('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true })
   for (const [path, ready, name] of [
     ['/', "document.querySelector('.landing-hero')", 'landing'],
-    ['/dashboard', "document.querySelector('.dashboard-team-card')", 'dashboard'],
+    ['/dashboard', "document.querySelector('.recommendation-card')", 'dashboard'],
     ['/teams', "document.querySelectorAll('.team-card').length === 6", 'teams'],
     ['/teams/create', "document.querySelector('.create-team-form')", 'create'],
     ['/profile', "document.querySelector('.profile-skill-groups')", 'profile'],

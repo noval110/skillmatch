@@ -91,7 +91,7 @@ func TestMigrationsFromEmptyDatabase(t *testing.T) {
 	if err := Migrate(ctx, pool); err != nil {
 		t.Fatal(err)
 	}
-	wantTables := []string{"join_requests", "role_skills", "skills", "team_members", "team_roles", "teams", "user_skills", "users"}
+	wantTables := []string{"conversation_members", "conversations", "join_requests", "messages", "notifications", "role_skills", "skills", "team_members", "team_roles", "teams", "user_achievements", "user_portfolios", "user_skills", "users"}
 	if got := tables(); !reflect.DeepEqual(got, wantTables) {
 		t.Fatalf("tables after bootstrap: got %v, want %v", got, wantTables)
 	}
@@ -126,7 +126,7 @@ END $$;
 		result := make(map[string]string)
 		for _, table := range wantTables {
 			var data string
-			query := `SELECT COALESCE(jsonb_agg(to_jsonb(t) ORDER BY id),'[]'::jsonb)::text FROM ` + pgx.Identifier{table}.Sanitize() + ` t`
+			query := `SELECT COALESCE(jsonb_agg(to_jsonb(t) ORDER BY to_jsonb(t)::text),'[]'::jsonb)::text FROM ` + pgx.Identifier{table}.Sanitize() + ` t`
 			if err := pool.QueryRow(ctx, query).Scan(&data); err != nil {
 				t.Fatal(err)
 			}
@@ -143,5 +143,5 @@ END $$;
 	if after := snapshot(); !reflect.DeepEqual(after, before) {
 		t.Fatal("reapplying migrations changed existing rows or duplicated the skill catalog")
 	}
-	t.Logf("Verified all eight tables, generated IDs, foreign keys, skill catalog, and preservation of every row after repeated migrations: %v", wantTables)
+	t.Logf("Verified all application tables, generated IDs, foreign keys, skill catalog, and preservation of every row after repeated migrations: %v", wantTables)
 }
