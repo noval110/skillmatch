@@ -60,4 +60,142 @@
   :is(.notifications-page, .profile-page, .messages-page) .topbar-actions { flex-wrap: wrap; min-width: 0; max-width: 100%; }
   .community-body > .section-heading { flex-wrap: wrap; gap: 12px; }
   .notification-row { padding: 16px; gap: 10px; }
+
+  .conversation-group {
+  display: grid;
+  gap: 6px;
+  margin-top: 22px;
+}
+
+.conversation-group:first-of-type {
+  margin-top: 14px;
+}
+
+.conversation-group-title {
+  margin: 0 10px 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text-secondary);
+}
+
+.conversation-group-empty {
+  margin: 0 10px;
+  padding: 10px 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.conversation-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.conversation-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.conversation-title-row strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.conversation-title-row time {
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+
+.conversation-preview {
+  display: block;
+  overflow: hidden;
+  margin-top: 3px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.conversation-type-meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 3px;
+  color: var(--text-secondary);
+}
+
+.chat-header-target {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.chat-header-target > span:last-child {
+  display: grid;
+  gap: 2px;
+}
+
+.chat-header-target small {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.chat-date-separator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 18px 0;
+}
+
+.chat-date-separator span {
+  padding: 5px 10px;
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.chat-sender {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+}
+
+.chat-bubble.is-continuation {
+  margin-top: -6px;
+}
+
+.conversation-list-heading p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+@media (max-width: 760px) {
+  .messages-layout.has-active .conversation-list {
+    display: none;
+  }
+
+  .messages-layout:not(.has-active) .chat-placeholder {
+    display: none;
+  }
+
+  .messages-layout {
+    min-height: calc(100vh - 160px);
+  }
+
+  .chat-thread {
+    min-width: 0;
+  }
+
+  .chat-composer textarea {
+    min-width: 0;
+  }
+}
 }
