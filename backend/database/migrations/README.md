@@ -12,6 +12,13 @@ SQL files are embedded in the Go binary and executed in sorted filename order:
    profile preferences, and their constraints.
 3. `002_multi_competition.sql`: adds competition/skill classification and seeds
    the skill catalog without duplicating existing names or replacing custom categories.
+4. `003_notifications.sql`: adds private account notifications and join-request events.
+5. `004_profile_showcase.sql`: adds portfolio and achievement records.
+6. `005_direct_messages.sql`: adds private direct conversations and messages.
+7. `006_team_milestones.sql`: adds the private team competition workspace,
+   progress/status constraints, cascade cleanup, and team-scoped indexes.
+8. `007_team_chat.sql`: adds one unique conversation per team and a per-member
+   read watermark while preserving all existing direct conversations and messages.
 
 Keep zero-padded numeric filename prefixes. Every migration must be repeatable:
 the runner reapplies the ordered files at startup. Existing tables are retained by
@@ -45,7 +52,7 @@ environment-only startup tests. They use temporary schemas.
 Set `SKILLMATCH_EMPTY_DATABASE_TEST=1` to enable the stronger empty-database test.
 Use a **test/local** `DATABASE_URL` whose role has `CREATEDB` permission. The test
 creates a uniquely named database from `template0`, reproduces the old error,
-runs the fixed migrations, checks all eight tables, inserts linked fixtures,
+runs the fixed migrations, checks every application table, inserts linked fixtures,
 and reapplies migrations twice to verify that every row is preserved. It closes
 connections and removes only the database it created. Existing local/production
 databases are not migrated or deleted by this test.

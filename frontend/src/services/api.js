@@ -74,6 +74,11 @@ export const addProfileSkill = (body) => request('/profile/skills', { method: 'P
 export const updateProfileSkill = (skillId, body) => request(`/profile/skills/${skillId}`, { method: 'PUT', body })
 export const deleteProfileSkill = (skillId) => request(`/profile/skills/${skillId}`, { method: 'DELETE' })
 export const getTeams = () => request('/teams', { auth: false })
+export const getTeamReadiness = (teamId) => request(`/teams/${teamId}/readiness`)
+export const getTeamMilestones = (teamId) => request(`/teams/${teamId}/milestones`)
+export const createTeamMilestone = (teamId, body) => request(`/teams/${teamId}/milestones`, { method: 'POST', body })
+export const updateTeamMilestone = (teamId, milestoneId, body) => request(`/teams/${teamId}/milestones/${milestoneId}`, { method: 'PUT', body })
+export const deleteTeamMilestone = (teamId, milestoneId) => request(`/teams/${teamId}/milestones/${milestoneId}`, { method: 'DELETE' })
 export const getRecommendedTeams = () => request('/teams/recommended')
 export const searchTeams = (filters = {}) => {
   const params = new URLSearchParams()

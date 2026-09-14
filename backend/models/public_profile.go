@@ -19,7 +19,8 @@ type PublicProfile struct {
 }
 
 type PublicProfileTeam struct {
-	ID   int64  `json:"id"`
-	Name string `json:"name"`
-	Role string `json:"role"`
+	ID              int64  `json:"id"`
+	Name            string `json:"name"`
+	Role            string `json:"role"`
+	CompetitionType string `json:"competition_type"`
 }

@@ -29,7 +29,7 @@ type communityTest struct {
 func TestCommunityRoutesRequireAuthentication(t *testing.T) {
 	e := echo.New()
 	RegisterCommunityRoutes(e, nil)
-	for _, route := range [][2]string{{"GET", "/notifications"}, {"GET", "/notifications/unread-count"}, {"PUT", "/notifications/1/read"}, {"PUT", "/notifications/read-all"}, {"GET", "/profile/showcase"}, {"POST", "/profile/portfolio"}, {"PUT", "/profile/portfolio/1"}, {"DELETE", "/profile/portfolio/1"}, {"POST", "/profile/achievements"}, {"PUT", "/profile/achievements/1"}, {"DELETE", "/profile/achievements/1"}, {"POST", "/conversations"}, {"GET", "/conversations"}, {"GET", "/conversations/1"}, {"GET", "/conversations/1/messages"}, {"POST", "/conversations/1/messages"}, {"PUT", "/conversations/1/read"}, {"GET", "/teams/recommended"}} {
+	for _, route := range [][2]string{{"GET", "/notifications"}, {"GET", "/notifications/unread-count"}, {"PUT", "/notifications/1/read"}, {"PUT", "/notifications/read-all"}, {"GET", "/profile/showcase"}, {"POST", "/profile/portfolio"}, {"PUT", "/profile/portfolio/1"}, {"DELETE", "/profile/portfolio/1"}, {"POST", "/profile/achievements"}, {"PUT", "/profile/achievements/1"}, {"DELETE", "/profile/achievements/1"}, {"POST", "/conversations"}, {"GET", "/conversations"}, {"GET", "/conversations/1"}, {"GET", "/conversations/1/messages"}, {"POST", "/conversations/1/messages"}, {"PUT", "/conversations/1/read"}, {"GET", "/teams/recommended"}, {"GET", "/teams/1/milestones"}, {"POST", "/teams/1/milestones"}, {"PUT", "/teams/1/milestones/1"}, {"DELETE", "/teams/1/milestones/1"}} {
 		w := httptest.NewRecorder()
 		e.ServeHTTP(w, httptest.NewRequest(route[0], "/api"+route[1], nil))
 		if w.Code != 401 {
@@ -86,6 +86,7 @@ func newCommunityTest(t *testing.T) *communityTest {
 	api.POST("/teams/:id/join", wrap(JoinTeam))
 	api.PUT("/join-requests/:id/accept", wrap(AcceptJoinRequest))
 	api.PUT("/join-requests/:id/reject", wrap(RejectJoinRequest))
+	api.DELETE("/teams/:id", wrap(DeleteTeam))
 	api.GET("/users/:id/profile", wrap(GetPublicUserProfile))
 	return &communityTest{pool, e, t}
 }

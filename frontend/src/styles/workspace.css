@@ -1,0 +1,45 @@
+/* Shared authenticated shell. Route content retains its own component styles. */
+.app-shell > .sidebar { width: 222px; padding: 24px 16px; background: var(--sidebar); border-right-color: var(--border-soft); }
+.app-shell > .app-content { margin-left: 222px; background: var(--bg); }
+.workspace-brand { height: 64px; padding: 0 6px 22px; gap: 10px; text-decoration: none; color: var(--text); }
+.workspace-brand > span:last-child { font-size: 20px; letter-spacing: -.5px; }
+.workspace-brand small { display: block; margin-top: 4px; color: var(--text-secondary); font-size: 8px; font-weight: 400; letter-spacing: .05px; }
+.workspace-logo { position: relative; flex: 0 0 32px; width: 32px; height: 34px; overflow: hidden; }
+.workspace-logo img { position: absolute; top: -9px; left: -17px; width: 66px; max-width: none; }
+.app-shell .sidebar-nav { margin-top: 16px; gap: 5px; }
+.app-shell .sidebar-nav a { min-height: 43px; gap: 14px; padding-inline: 13px; font-size: 13px; border-radius: 7px; }
+.app-shell .sidebar-nav a.active { background: var(--primary-soft); box-shadow: inset 3px 0 var(--progress-fill); }
+.app-shell .sidebar-nav a svg { flex-shrink: 0; stroke-width: 1.7; }
+.sidebar-purpose { margin: auto 0 25px; padding: 22px 17px; border: 1px solid var(--border-soft); border-radius: 11px; background: linear-gradient(145deg, var(--primary-softer), var(--primary-soft)); }
+.sidebar-purpose > span { color: var(--accent-text); font-size: 8px; letter-spacing: .1em; }
+.sidebar-purpose p { margin: 15px 0; color: var(--text); font-size: 19px; line-height: 1.45; letter-spacing: -.4px; }
+.sidebar-purpose small { color: var(--muted); font-size: 11px; line-height: 1.7; }
+.app-shell .logout-button { margin-top: 0; min-height: 42px; font-size: 12px; font-weight: 400; color: var(--text-secondary); }
+.account-initials { background: var(--primary-soft); color: var(--accent-text); font-size: 12px; font-weight: 600; }
+.topbar-user > span > small { display: block; color: var(--muted); font-size: 10px; margin-top: 3px; text-align: left; }
+.command-search { display: flex; align-items: center; gap: 10px; width: min(510px, 100%); height: 44px; padding: 0 6px 0 15px; border: 1px solid var(--border-soft); border-radius: 9px; background: var(--surface); color: var(--muted); }
+.command-search > svg { flex-shrink: 0; }
+.command-search input { min-width: 0; flex: 1; width: 100%; height: 100%; padding: 0; border: 0; background: transparent; color: var(--text); font-size: 13px; outline: none; }
+.command-search:focus-within { outline: 2px solid var(--accent-text); outline-offset: 2px; }
+.command-search input::placeholder { color: var(--muted); }
+.command-search button { width: 34px; height: 34px; display: grid; place-items: center; background: transparent; border: 0; border-radius: 5px; color: var(--text-secondary); cursor: pointer; }
+.command-search button:hover { background: var(--surface-hover); color: var(--text); }
+.directory-query { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 18px; padding: 14px; background: var(--primary-soft); border: 1px solid var(--primary-border); border-radius: 8px; color: var(--text-secondary); font-size: 13px; }
+.directory-query strong { color: var(--text); overflow-wrap: anywhere; }
+.directory-query button { color: var(--accent-text); background: transparent; border: 0; padding: 8px; cursor: pointer; }
+@media (max-height: 850px) { .sidebar-purpose { padding: 15px; margin-top: 24px; } .sidebar-purpose p { font-size: 16px; margin-block: 10px; } }
+@media (max-height: 730px) { .sidebar-purpose { display: none; } .app-shell .logout-button { margin-top: auto; } }
+@media (max-width: 800px) {
+  .app-shell > .app-content { margin-left: 0; }
+  .app-shell > .sidebar { width: 250px; visibility: hidden; overflow-y: auto; }
+  .app-shell > .sidebar.is-open { visibility: visible; }
+  .app-shell .sidebar-close { color: var(--text); top: 65px; right: 17px; }
+  .app-shell .sidebar-nav { margin-top: 35px; }
+  .sidebar-purpose { margin-top: 28px; }
+}
+@media (max-width: 420px) {
+  .topbar-user { padding: 3px; }
+  .topbar-user > span,
+  .topbar-user > svg { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .app-shell *, .app-shell *::before, .app-shell *::after { animation: none !important; transition: none !important; } }

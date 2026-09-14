@@ -77,7 +77,7 @@ func TestPublicProfileIntegration(t *testing.T) {
  (102,'Viewer','private-viewer@example.test','other-secret-hash','beginner',NULL,NULL,NULL,NULL,NULL);
  INSERT INTO skills(id,name,category) VALUES (10001,'Profile Speaking','Communication'),(10002,'Profile React','Technical'),(10003,'Profile Custom','');
  INSERT INTO user_skills(user_id,skill_id,level) VALUES (101,10001,'beginner'),(101,10002,'advanced'),(102,10003,'beginner');
- INSERT INTO teams(id,name,owner_id,max_members) VALUES (101,'Alpha',101,5),(102,'Beta',102,5),(103,'Pending Only',102,5);
+ INSERT INTO teams(id,name,owner_id,max_members,competition_type) VALUES (101,'Alpha',101,5,'Hackathon'),(102,'Beta',102,5,'Business Case'),(103,'Pending Only',102,5,'Debate');
  INSERT INTO team_members(team_id,user_id,role) VALUES (101,101,'Owner'),(102,101,'Frontend Developer'),(102,102,'Owner');
  INSERT INTO join_requests(team_id,user_id,status) VALUES (103,101,'pending');`)
 	if err != nil {
@@ -133,7 +133,7 @@ func TestPublicProfileIntegration(t *testing.T) {
 		if len(profile.Skills) != 2 || profile.Skills[0].Name != "Profile React" || profile.Skills[1].Category != "Communication" || profile.Skills[0].Level != "advanced" {
 			t.Fatalf("incorrect skills: %+v", profile.Skills)
 		}
-		if len(profile.Teams) != 2 || profile.Teams[0].Name != "Alpha" || profile.Teams[0].Role != "Owner" || profile.Teams[1].ID != 102 {
+		if len(profile.Teams) != 2 || profile.Teams[0].Name != "Alpha" || profile.Teams[0].Role != "Owner" || profile.Teams[0].CompetitionType != "Hackathon" || profile.Teams[1].ID != 102 {
 			t.Fatalf("incorrect memberships: %+v", profile.Teams)
 		}
 		var body map[string]any
@@ -157,7 +157,7 @@ func TestPublicProfileIntegration(t *testing.T) {
 			assertKeys(skill.(map[string]any), "id", "name", "category", "level")
 		}
 		for _, team := range body["teams"].([]any) {
-			assertKeys(team.(map[string]any), "id", "name", "role")
+			assertKeys(team.(map[string]any), "id", "name", "role", "competition_type")
 		}
 		for _, secret := range []string{"private-budi", "private-viewer", "secret-password", "other-secret", os.Getenv("JWT_SECRET"), token(viewer)} {
 			if strings.Contains(w.Body.String(), secret) {

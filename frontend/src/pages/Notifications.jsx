@@ -5,9 +5,9 @@ import Navbar from '../components/Navbar'
 import LoadingSpinner from '../components/LoadingSpinner'
 import usePolling from '../hooks/usePolling'
 import { getNotifications, readNotification, readAllNotifications } from '../services/api'
+import { notificationTarget } from '../utils/notifications'
 import './community.css'
 
-export const notificationTarget = item => item.related_conversation_id ? `/messages/${item.related_conversation_id}` : item.related_team_id ? `/teams/${item.related_team_id}` : item.related_user_id ? `/users/${item.related_user_id}` : null
 export default function Notifications() {
   const [pages, setPages] = useState(1)
   const [actionError, setActionError] = useState('')

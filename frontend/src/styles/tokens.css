@@ -72,3 +72,25 @@
   --category-esports: #c7b5e3;
   --category-esports-soft: rgba(169, 140, 208, .10);
 }
+
+/* Shared geometry, type, and rhythm for public and app components. */
+:root {
+  --font-caption: 11px;
+  --font-small: 13px;
+  --font-body: 14px;
+  --font-title: 20px;
+  --font-heading: clamp(28px, 2.8vw, 36px);
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --section-space: 76px;
+  --radius-control: 8px;
+  --radius-card: 12px;
+  --radius-panel: 20px;
+  --container-wide: 1240px;
+  --shadow-button: 0 4px 16px rgba(143, 29, 44, .14);
+}

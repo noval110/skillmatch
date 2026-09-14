@@ -37,7 +37,8 @@ SELECT u.id, u.name, COALESCE(u.bio, ''), COALESCE(u.experience_level, ''),
        ), '[]'::jsonb),
        COALESCE((
            SELECT jsonb_agg(jsonb_build_object(
-               'id', t.id, 'name', t.name, 'role', tm.role
+               'id', t.id, 'name', t.name, 'role', tm.role,
+               'competition_type', COALESCE(t.competition_type, '')
            ) ORDER BY t.name, t.id)
            FROM team_members tm JOIN teams t ON t.id = tm.team_id
            WHERE tm.user_id = u.id

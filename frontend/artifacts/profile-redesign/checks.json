@@ -1,0 +1,125 @@
+{
+  "checks": [
+    {
+      "scenario": "own profile loads complete credibility sections without team N+1 requests",
+      "pass": true
+    },
+    {
+      "scenario": "profile edit persists existing fields",
+      "pass": true
+    },
+    {
+      "scenario": "skill add, level edit, and remove flows",
+      "pass": true
+    },
+    {
+      "scenario": "portfolio validation, create, edit, and delete flows",
+      "pass": true
+    },
+    {
+      "scenario": "achievement create and timeline rendering",
+      "pass": true
+    },
+    {
+      "scenario": "incomplete own profile shows real missing fields and compact empty states",
+      "pass": true
+    },
+    {
+      "scenario": "own profile error state",
+      "pass": true
+    },
+    {
+      "scenario": "public profile uses safe fields and handles message failure inline",
+      "pass": true
+    },
+    {
+      "scenario": "message opens the existing direct-conversation route",
+      "pass": true
+    },
+    {
+      "scenario": "public profile API error can recover in place",
+      "pass": true
+    },
+    {
+      "scenario": "current user sees edit action and cannot message themselves",
+      "pass": true
+    },
+    {
+      "scenario": "missing public profile has a controlled 404 state",
+      "pass": true
+    },
+    {
+      "viewport": 1440,
+      "documentWidth": 1430,
+      "overflowing": []
+    },
+    {
+      "viewport": 1440,
+      "documentWidth": 1430,
+      "overflowing": []
+    },
+    {
+      "viewport": 390,
+      "documentWidth": 380,
+      "overflowing": []
+    },
+    {
+      "viewport": 320,
+      "documentWidth": 310,
+      "overflowing": []
+    }
+  ],
+  "mutations": [
+    {
+      "path": "/profile",
+      "method": "PUT",
+      "authorized": true
+    },
+    {
+      "path": "/profile/skills",
+      "method": "POST",
+      "authorized": true
+    },
+    {
+      "path": "/profile/skills/1",
+      "method": "PUT",
+      "authorized": true
+    },
+    {
+      "path": "/profile/skills/20",
+      "method": "DELETE",
+      "authorized": true
+    },
+    {
+      "path": "/profile/portfolio",
+      "method": "POST",
+      "authorized": true
+    },
+    {
+      "path": "/profile/portfolio/30",
+      "method": "PUT",
+      "authorized": true
+    },
+    {
+      "path": "/profile/portfolio/30",
+      "method": "DELETE",
+      "authorized": true
+    },
+    {
+      "path": "/profile/achievements",
+      "method": "POST",
+      "authorized": true
+    },
+    {
+      "path": "/conversations",
+      "method": "POST",
+      "authorized": true
+    },
+    {
+      "path": "/conversations",
+      "method": "POST",
+      "authorized": true
+    }
+  ],
+  "runtimeErrors": []
+}

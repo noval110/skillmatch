@@ -1,102 +1,119 @@
-import useAuthenticated from '../hooks/useAuthenticated'
-import CompetitionCategories from '../components/CompetitionCategories'
-import { ArrowRight, BarChart3, BrainCircuit, Check, ChevronRight, ClipboardList, Code2, Lightbulb, Mail, PenTool, Rocket, ShieldCheck, Sparkles, Target, UserRound, UserSearch, UsersRound, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { ArrowRight, Bell, BookOpen, BrainCircuit, Check, ChevronRight, Compass, Flag, Gamepad2, GraduationCap, Layers, Lightbulb, MessageSquare, Mic, Palette, ScanLine, Sprout, Target, Trophy, UserRound, UsersRound } from 'lucide-react'
+import useAuthenticated from '../hooks/useAuthenticated'
+import collaboration from '../assets/illustrations/login-team-hd.png'
+import highFive from '../assets/illustrations/register-highfive-hd.png'
 import brandLogo from '../assets/branding/skillmatch-logo.png'
-import byteBuilders from '../assets/team-covers/byte-builders.png'
-import devNova from '../assets/team-covers/dev-nova.png'
-import hackSquad from '../assets/team-covers/hack-squad.png'
-import ApprovedAsset from '../components/ApprovedAsset'
-import SkillIcon from '../components/SkillIcon'
-import FAQAccordion from '../components/landing/FAQAccordion'
 import LandingNavbar from '../components/landing/LandingNavbar'
 import LandingTeamCard from '../components/landing/LandingTeamCard'
+import FAQAccordion from '../components/landing/FAQAccordion'
 import '../styles/landing.css'
 
+const highlights = [
+  [Trophy, 'Every kind of competition', 'One place to find your people'],
+  [Sprout, 'Beginners belong here', 'A starting point at every level'],
+  [UsersRound, 'A role for your strengths', 'Build a more balanced team'],
+  [Target, 'Skills that fit together', 'Discover shared potential'],
+]
+const problems = [
+  ['01', 'The right people are hard to find.', 'Sulit menemukan anggota tim dengan minat, tujuan, dan komitmen yang sejalan.'],
+  ['02', 'Great skills. Missing balance.', 'Tim punya banyak ide, tapi belum punya kombinasi skill dan role yang dibutuhkan.'],
+  ['03', 'The first step feels the hardest.', 'Pemula sering minder atau tidak tahu tim mana yang terbuka untuk belajar bersama.'],
+  ['04', 'The gaps show up too late.', 'Kekurangan tim baru terasa ketika deadline lomba sudah semakin dekat.'],
+]
 const steps = [
-  { icon: UserRound, title: 'Buat Profile', text: 'Tambahkan skill, level, dan pengalamanmu.' },
-  { icon: UsersRound, title: 'Pilih Kompetisi', text: 'Temukan team berdasarkan jenis lomba.' },
-  { icon: Target, title: 'Lihat Match', text: 'Cari role yang cocok dengan kemampuanmu.' },
-  { icon: Rocket, title: 'Join & Compete', text: 'Gabung dan persiapkan kompetisi bersama.' },
+  [UserRound, 'Build your profile', 'Tambahkan skill, minat, tujuan kompetisi, dan waktu yang bisa kamu berikan.'],
+  [Compass, 'Discover or create a team', 'Jelajahi beragam kategori lomba, atau bentuk tim dengan role yang kamu butuhkan.'],
+  [UsersRound, 'Match, connect, collaborate', 'Lihat kecocokan, isi role yang belum lengkap, dan mulai persiapan bersama.'],
 ]
-
 const features = [
-  { icon: BrainCircuit, title: 'Smart Matching', text: 'Temukan role berdasarkan skill dan levelmu.' },
-  { icon: UserSearch, title: 'Team Discovery', text: 'Cari team sesuai bidang yang kamu minati.' },
-  { icon: ClipboardList, title: 'Role Requirements', text: 'Lihat skill yang diperlukan setiap role.' },
-  { icon: ShieldCheck, title: 'Match Score', text: 'Ketahui seberapa cocok kamu dengan sebuah role.' },
-  { icon: UsersRound, title: 'Join Requests', text: 'Owner dapat mengelola calon anggota team.' },
-  { icon: UserRound, title: 'Member Profile', text: 'Tampilkan skill dan pengalamanmu.' },
+  [BrainCircuit, 'Smart Team Matching', 'Temukan kecocokan berdasarkan skill, kebutuhan role, dan minat kompetisi.'],
+  [Sprout, 'Beginner-Friendly Discovery', 'Cari tim yang menyambut pemula dan membuka kesempatan belajar bersama.'],
+  [ScanLine, 'Role & Skill Gap Analysis', 'Pahami skill dan role yang masih dibutuhkan sebelum kompetisi dimulai.'],
+  [Target, 'Team Readiness Overview', 'Lihat kesiapan dan keseimbangan tim agar langkah berikutnya lebih jelas.'],
+  [Trophy, 'Competition Category Support', 'Dari debat dan business case hingga riset, desain, olahraga, dan teknologi.'],
+  [GraduationCap, 'Portfolio & Achievements', 'Tunjukkan proyek, pencapaian, dan pengalaman kompetisi di profilmu.'],
+  [MessageSquare, 'Team Collaboration', 'Lanjutkan dari menemukan tim ke percakapan dan persiapan bersama.'],
+  [Bell, 'Stay in the Loop', 'Ikuti status permintaan bergabung dan aktivitas tim melalui notifikasi.'],
 ]
-
-const audiences = [
-  { icon: Code2, label: 'Developer' }, { icon: PenTool, label: 'UI/UX Designer' },
-  { icon: UserRound, label: 'Debater / Speaker' }, { icon: BarChart3, label: 'Business Strategist' },
-  { icon: BrainCircuit, label: 'Researcher' }, { icon: Lightbulb, label: 'Creator / Esports Player' },
+const categories = [
+  [Flag, 'Hackathon'], [Layers, 'Web Development'], [ScanLine, 'Mobile App'], [Palette, 'UI/UX Design'],
+  [Mic, 'Debate'], [Lightbulb, 'Business Case'], [BookOpen, 'Research / KTI'], [BrainCircuit, 'Data / AI'],
+  [Palette, 'Creative Media'], [Gamepad2, 'Esports'], [Trophy, 'Sports'], [Compass, 'Other competitions'],
 ]
-
-const comparisons = [
-  ['Cari manual/random', 'Berdasarkan skill'], ['Role tidak jelas', 'Role jelas'],
-  ['Match tebak-tebakan', 'Ada match score'], ['Skill cuma nama', 'Ada experience level'],
-  ['Join lewat chat', 'Join request terstruktur'],
-]
-
-const faqs = [
-  { question: 'Kompetisi apa saja yang didukung?', answer: 'Hackathon, debat, business case, KTI, desain, video, esports, olahraga, dan lainnya. Kamu juga dapat mengetik jenis kompetisi serta role sendiri.' },
-  { question: 'Apakah SkillMatch gratis?', answer: 'Ya. Kamu dapat membuat profil, mencari team, dan mengirim join request tanpa biaya.' },
-  { question: 'Apakah harus punya team dulu?', answer: 'Tidak. Kamu bisa melengkapi profil lalu mencari team yang membutuhkan skill milikmu.' },
-  { question: 'Bagaimana match score dihitung?', answer: 'Match score membandingkan skill dan level pengalaman pada profilmu dengan kebutuhan setiap role.' },
-  { question: 'Bisa mencari role tertentu?', answer: 'Bisa. Gunakan filter role dan skill pada halaman Explore Teams.' },
-  { question: 'Apakah saya bisa membuat team sendiri?', answer: 'Bisa. Setelah login, pilih Create Team dan pilih kompetisi serta role yang dibutuhkan.' },
-  { question: 'Apakah owner bisa memilih anggota?', answer: 'Bisa. Owner menerima atau menolak setiap join request melalui halaman pengelolaan team.' },
-]
-
 const teams = [
-  { name: 'HackSquad', initial: 'H', category: 'Hackathon · Technology', members: '3 / 5', skills: ['React', 'Node.js', 'TypeScript'], people: ['Raka', 'Sinta', 'Niko'], extra: 2, match: 86, cover: hackSquad },
-  { name: 'ArgueMasters', initial: 'A', category: 'Debate · Academic', members: '2 / 3', skills: ['Public Speaking', 'Argumentation', 'Research'], people: ['Maya', 'Arif'], extra: 1, match: 78, cover: devNova },
-  { name: 'CaseMinds', initial: 'C', category: 'Business Case · Business', members: '3 / 5', skills: ['Business Analysis', 'Strategy', 'Presentation'], people: ['Tia', 'Dimas', 'Fani'], extra: 2, match: 72, cover: byteBuilders },
+  { name: 'ByteBuilders', initial: 'BB', category: 'Hackathon', description: 'Membangun solusi digital untuk akses pendidikan yang lebih baik.', roles: ['Frontend', 'UI/UX Designer'], members: '3 / 5', beginner: true, tone: 'blue' },
+  { name: 'Ruang Riset', initial: 'RR', category: 'Research / KTI', description: 'Meneliti ide pengelolaan sampah yang bisa diterapkan di lingkungan kampus.', roles: ['Researcher', 'Data Analyst'], members: '2 / 4', beginner: true, tone: 'green' },
+  { name: 'Case Collective', initial: 'CC', category: 'Business Case', description: 'Merancang strategi bisnis yang berdampak untuk usaha lokal.', roles: ['Strategist', 'Presenter'], members: '2 / 4', beginner: false, tone: 'rose' },
 ]
+const faqs = [
+  { question: 'What is SkillMatch?', answer: 'SkillMatch adalah platform untuk membantu mahasiswa menemukan rekan dan membentuk tim kompetisi berdasarkan skill, role, minat, dan tujuan bersama.' },
+  { question: 'Is SkillMatch only for coding competitions?', answer: 'Tidak. Kamu bisa menemukan tim untuk debat, business case, riset / KTI, desain, akademik, olahraga, esports, dan berbagai kompetisi lainnya.' },
+  { question: 'Can beginners join teams?', answer: 'Bisa. Lengkapi profil dengan kemampuan dan minat belajarmu, lalu cari tim yang terbuka untuk pemula. Baca kebutuhan role dan preferensi pengalaman sebelum mengajukan permintaan bergabung.' },
+  { question: 'Can I create my own team?', answer: 'Bisa. Setelah masuk, buka halaman Explore Teams dan pilih Create Team. Tentukan kategori kompetisi, tujuan tim, dan role yang masih dibutuhkan.' },
+  { question: 'How does matching work?', answer: 'Kecocokan membandingkan skill dan level pengalaman di profilmu dengan kebutuhan role. Gunakan informasi ini sebagai panduan, lalu diskusikan tujuan dan komitmen dengan tim. Skor bukan jaminan diterima.' },
+  { question: 'Do I need to pay to use SkillMatch?', answer: 'Saat ini kamu dapat membuat profil, menjelajahi tim, dan mengirim permintaan bergabung tanpa biaya.' },
+  { question: 'Can I use SkillMatch for non-IT competitions?', answer: 'Ya. Pilih kategori yang sesuai dan tambahkan role seperti speaker, peneliti, strategist, desainer, atau atlet. Kamu juga bisa menentukan jenis kompetisi dan kebutuhan role sendiri.' },
+]
+
+function SectionHeading({ eyebrow, title, children }) {
+  return <div className="landing-section-heading"><span className="landing-kicker">{eyebrow}</span><h2>{title}</h2>{children && <p>{children}</p>}</div>
+}
+function Actions({ authenticated = false }) {
+  return <div className="landing-hero-actions"><Link className="landing-button landing-button-primary" to={authenticated ? '/dashboard' : '/register'}>{authenticated ? 'Go to Dashboard' : 'Get Started'}<ArrowRight size={16} /></Link><Link className="landing-button landing-button-outline" to="/teams">Explore Teams</Link></div>
+}
 
 export default function LandingPage() {
   const isAuthenticated = useAuthenticated()
   const [activeSection, setActiveSection] = useState('home')
   const [activeFAQ, setActiveFAQ] = useState(-1)
-
   useEffect(() => {
-    const ids = ['home', 'how-it-works', 'features', 'explore', 'about', 'faq']
     const observer = new IntersectionObserver((entries) => {
-      const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
+      const visible = entries.find((entry) => entry.isIntersecting)
       if (visible) setActiveSection(visible.target.id)
-    }, { rootMargin: '-20% 0px -65%', threshold: [0, .2, .5] })
-    ids.forEach((id) => { const element = document.getElementById(id); if (element) observer.observe(element) })
+    }, { rootMargin: '-15% 0px -65%', threshold: 0 })
+    document.querySelectorAll('[data-landing-nav]').forEach((element) => observer.observe(element))
     return () => observer.disconnect()
   }, [])
 
-  return (
-    <div className="landing-page">
-      <LandingNavbar activeSection={activeSection} isAuthenticated={isAuthenticated} />
-      <main>
-        <section className="landing-hero" id="home"><div className="landing-container landing-hero-grid"><div className="landing-hero-copy"><span className="landing-eyebrow">Find • Connect • Build</span><h1>Find the right team<br /><b>for your next competition.</b></h1><p>SkillMatch membantu kamu menemukan partner dan anggota tim berdasarkan skill, role, minat, dan tingkat kecocokan.</p><div className="landing-hero-actions"><Link className="landing-button landing-button-primary" to="/teams">Explore Teams <ArrowRight size={15} /></Link><Link className="landing-button landing-button-outline" to={isAuthenticated ? "/dashboard" : "/register"}>{isAuthenticated ? "Dashboard" : "Get Started"}</Link></div><p className="competition-examples">Hackathon · Debate · Business Case · Research · Design · Creative · Esports</p><CompetitionCategories /><div className="landing-proof"><span><b>100+</b><small>Active Teams</small></span><span><b>500+</b><small>Talented Members</small></span><span><b>90%</b><small>Match Accuracy</small></span></div></div><div className="landing-hero-art"><span className="hero-orbit orbit-one" /><span className="hero-orbit orbit-two" /><ApprovedAsset name="dashboard" alt="Tim SkillMatch berkolaborasi" /></div></div></section>
+  return <div className="landing-page">
+    <a className="landing-skip-link" href="#main-content">Skip to content</a>
+    <LandingNavbar activeSection={activeSection} isAuthenticated={isAuthenticated} />
+    <main id="main-content">
+      <section className="landing-hero" id="home" data-landing-nav>
+        <div className="landing-container landing-hero-grid">
+          <div className="landing-hero-copy">
+            <span className="landing-eyebrow"><span />People. Skills. Shared ambition.</span>
+            <h1>Find the right team<br />for your next<br /><em>competition.</em></h1>
+            <p>SkillMatch membantu mahasiswa menemukan partner dan anggota tim berdasarkan skill, role, minat, dan tingkat kecocokan.</p>
+            <div className="landing-hero-actions"><Link className="landing-button landing-button-primary" to="/teams">Explore Teams<ArrowRight size={17} /></Link><Link className="landing-button landing-button-outline" to={isAuthenticated ? '/dashboard' : '/register'}>{isAuthenticated ? 'Dashboard' : 'Get Started'}<ChevronRight size={16} /></Link></div>
+            <p className="landing-hero-context">From hackathons and research competitions to debate, business case, design, and more.</p>
+            <div className="landing-context-chips">{['Technology', 'Academic', 'Business', 'Research', 'Creative', 'Design', 'Sports', 'Esports', 'Other'].map((label) => <span className="landing-chip" key={label}>{label}</span>)}</div>
+          </div>
+          <figure className="landing-hero-media"><div className="landing-media-label"><span className="landing-live-dot" />Different strengths. One shared goal.<span>01 / COLLABORATE</span></div><img src={collaboration} alt="Dua mahasiswa bekerja bersama menggunakan laptop" width="1423" height="1108" fetchPriority="high" /><figcaption><span className="landing-icon"><UsersRound size={22} /></span><div><strong>Your next chapter starts with a team.</strong><span>Find people to learn, build, and compete with.</span></div><ArrowRight size={20} /></figcaption></figure>
+        </div>
+        <div className="landing-container landing-highlights">{highlights.map(([Icon, title, text]) => <div key={title}><span className="landing-icon"><Icon size={22} /></span><div><strong>{title}</strong><p>{text}</p></div></div>)}</div>
+      </section>
 
-        <section className="landing-problem"><div className="landing-container landing-problem-grid"><div className="problem-copy"><span className="landing-kicker">The Problem</span><h2>Susah cari anggota tim<br />yang tepat?</h2><p>Banyak peserta kompetisi kesulitan menemukan partner dengan skill, role, dan tujuan yang sama.</p><ul>{['Skill tidak sesuai', 'Role team belum lengkap', 'Tidak tahu pengalaman anggota', 'Sulit menemukan orang dengan tujuan yang sama'].map((item) => <li key={item}><X size={12} />{item}</li>)}</ul></div><ArrowRight className="problem-arrow" size={30} /><div className="solution-card"><div><span className="landing-kicker">The Solution</span><h2>SkillMatch hadir!</h2><p>Platform yang menghubungkan kamu dengan team yang tepat berdasarkan skill, role, dan kecocokan yang terukur.</p></div><ApprovedAsset name="emptyTeam" alt="Mencari anggota team yang sesuai" /></div></div></section>
+      <section className="landing-section landing-problem"><div className="landing-container"><SectionHeading eyebrow="A familiar challenge" title="Ambition is everywhere. The right team isn't.">Why forming the right team is still so hard.</SectionHeading><div className="landing-problem-grid">{problems.map(([number, title, text]) => <article className="landing-card" key={number}><span className="landing-number">{number}</span><h3>{title}</h3><p>{text}</p></article>)}</div><p className="landing-section-note">Good ideas deserve a team that can bring them to life.<span>That's where SkillMatch comes in. <ArrowRight size={15} /></span></p></div></section>
 
-        <section className="landing-section" id="how-it-works"><div className="landing-container"><div className="landing-section-heading centered"><span className="landing-kicker">How It Works</span><h2>Cara Kerja SkillMatch</h2><p>Mudah, cepat, dan efektif. Hanya dalam beberapa langkah, kamu bisa menemukan tim yang tepat.</p></div><div className="landing-steps">{steps.map(({ icon: Icon, title, text }, index) => <article key={title}><span className="step-icon"><Icon size={21} /></span><small>0{index + 1}</small><h3>{title}</h3><p>{text}</p>{index < steps.length - 1 && <ChevronRight className="step-arrow" size={20} />}</article>)}</div></div></section>
+      <section className="landing-section" id="how-it-works" data-landing-nav><div className="landing-container"><SectionHeading eyebrow="From introduction to collaboration" title="How SkillMatch works">A clearer path from “I have an idea” to “we have a team.”</SectionHeading><div className="landing-steps">{steps.map(([Icon, title, text], index) => <article key={title}><div className="landing-step-top"><span className="landing-icon"><Icon size={25} /></span><span>STEP 0{index + 1}</span>{index < 2 && <ArrowRight size={20} />}</div><h3>{title}</h3><p>{text}</p></article>)}</div></div></section>
 
-        <section className="landing-section landing-features" id="features"><div className="landing-container landing-feature-layout"><div className="landing-section-heading"><span className="landing-kicker">Features</span><h2>Fitur Utama</h2><p>Semua yang kamu butuhkan untuk menemukan dan membangun team yang solid.</p></div><div className="landing-feature-grid">{features.map(({ icon: Icon, title, text }) => <article key={title}><span><Icon size={19} /></span><div><h3>{title}</h3><p>{text}</p></div></article>)}</div></div></section>
+      <section className="landing-section landing-features" id="features" data-landing-nav><div className="landing-container"><div className="landing-heading-row"><SectionHeading eyebrow="Purpose-built for better teamwork" title="More than a list of teams.">Understand where you fit, what your team needs, and what comes next.</SectionHeading><span className="landing-small-label">FIND YOUR PEOPLE. BUILD WITH PURPOSE.</span></div><div className="landing-feature-grid">{features.map(([Icon, title, text]) => <article className="landing-card" key={title}><span className={`landing-icon ${Icon === Sprout ? 'is-green' : ''}`}><Icon size={23} /></span><h3>{title}</h3><p>{text}</p></article>)}</div></div></section>
 
-        <section className="landing-matching"><div className="landing-container"><div className="landing-section-heading"><span className="landing-kicker">Smart Matching</span><h2>Sistem Matching yang Cerdas</h2><p>Kami menganalisis skill, pengalaman, dan preferensimu untuk memberikan rekomendasi yang paling sesuai.</p></div><div className="matching-flow"><article className="matching-skills"><h3>Your Skills</h3>{[['Public Speaking', 'Advanced'], ['Argumentation', 'Intermediate'], ['Research', 'Intermediate']].map(([skill, level]) => <div key={skill}><SkillIcon name={skill} /><span><b>{skill}</b><small>{level}</small></span></div>)}</article><ArrowRight className="matching-arrow" size={24} /><div className="matching-engine"><BrainCircuit size={27} /><b>Match Engine</b></div><ArrowRight className="matching-arrow" size={24} /><article className="matching-result"><header><h3>Second Speaker</h3><b>86%</b></header><i><em /></i>{[['Public Speaking', true], ['Argumentation', true], ['Research', true], ['Rebuttal', false]].map(([skill, matched]) => <p key={skill}>{matched ? <Check size={13} /> : <X size={13} />}<span>{skill}</span></p>)}</article><ApprovedAsset name="createTeam" className="matching-illustration" alt="Menyusun kebutuhan team" /></div></div></section>
+      <section className="landing-section"><div className="landing-container landing-inclusive"><figure className="landing-secondary-media"><img src={highFive} alt="Dua mahasiswa merayakan kemajuan bersama dengan high-five" width="1483" height="1061" loading="lazy" /><figcaption><Sprout size={18} />Room to learn. People to grow with.</figcaption></figure><div><SectionHeading eyebrow="Potential belongs on the team, too" title="You don't have to be an expert to get started.">Built not only for experts, but for learners who want to grow.</SectionHeading><p className="landing-body-copy">Setiap orang mulai dari suatu tempat. Temukan tim yang menghargai semangat belajar, bukan hanya pengalaman yang sudah kamu punya.</p><ul className="landing-check-list">{['Temukan tim yang menyambut pemula.', 'Kenali skill yang ingin kamu kembangkan.', 'Belajar dari mentor dan rekan yang lebih berpengalaman.', 'Tumbuh bersama dalam tim dengan beragam kemampuan.'].map((text) => <li key={text}><Check size={16} />{text}</li>)}</ul><Link className="landing-text-link" to="/teams">Find your starting point<ArrowRight size={17} /></Link></div></div></section>
 
-        <section className="landing-section" id="explore"><div className="landing-container"><div className="landing-section-heading heading-row"><div><span className="landing-kicker">Explore Teams</span><h2>Temukan Team yang Cocok</h2><small>Contoh team dan ilustrasi match</small><p>Lihat berbagai tim yang sedang mencari anggota baru dan temukan yang paling sesuai dengan skill dan tujuanmu.</p></div><Link to="/teams">Lihat semua team <ArrowRight size={14} /></Link></div><div className="landing-team-grid">{teams.map((team) => <LandingTeamCard team={team} key={team.name} />)}</div></div></section>
+      <section className="landing-section landing-categories"><div className="landing-container"><SectionHeading eyebrow="Different disciplines. Shared drive." title="Whatever your arena, find your team.">Not just for developers. For students with something to contribute.</SectionHeading><div className="landing-category-grid">{categories.map(([Icon, label]) => <Link to="/teams" className="landing-category" key={label}><Icon size={20} /><span>{label}</span><ChevronRight size={14} /></Link>)}</div></div></section>
 
-        <section className="landing-section landing-about" id="about"><div className="landing-container landing-about-grid"><div><div className="landing-section-heading"><span className="landing-kicker">Who Is It For?</span><h2>Untuk Siapa SkillMatch?</h2><p>Untuk peserta debat, bisnis, riset, desain, teknologi, olahraga, dan kompetisi kreatif.</p></div><div className="audience-grid">{audiences.map(({ icon: Icon, label }) => <article key={label}><span><Icon size={18} /></span><p>{label}</p></article>)}</div></div><div><div className="landing-section-heading"><span className="landing-kicker">Why SkillMatch?</span><h2>Kenapa Pilih SkillMatch?</h2></div><div className="comparison-card"><header><span>Tanpa SkillMatch</span><span>Dengan SkillMatch</span></header>{comparisons.map(([before, after]) => <div key={before}><span><X size={12} />{before}</span><span><Check size={12} />{after}</span></div>)}</div></div></div></section>
+      <section className="landing-section" id="explore" data-landing-nav><div className="landing-container"><div className="landing-heading-row"><SectionHeading eyebrow="A look at the possibilities" title="Different ideas. A place for you.">Contoh tim untuk menggambarkan pengalaman di SkillMatch.</SectionHeading><Link className="landing-text-link" to="/teams">Explore real teams<ArrowRight size={16} /></Link></div><div className="landing-team-grid">{teams.map((team) => <LandingTeamCard team={team} key={team.name} />)}</div><p className="landing-demo-note">Sample teams only. Team availability and requirements on Explore Teams may differ.</p></div></section>
 
-        <section className="landing-section landing-faq" id="faq"><div className="landing-container landing-faq-grid"><div className="landing-section-heading"><span className="landing-kicker">FAQ</span><h2>Pertanyaan yang Sering Diajukan</h2><p>Masih ada yang ingin kamu ketahui? Temukan jawabannya di sini.</p></div><FAQAccordion items={faqs} activeIndex={activeFAQ} onChange={setActiveFAQ} /></div></section>
+      <section className="landing-section" id="about" data-landing-nav><div className="landing-container landing-impact"><div><span className="landing-kicker">Why we're building SkillMatch</span><h2>More students deserve<br />the chance to <em>compete,<br />contribute, and grow.</em></h2></div><div><p>Kesempatan tidak seharusnya berhenti karena kamu belum punya koneksi atau belum tahu harus mulai dari mana.</p><p>SkillMatch membuka jalan untuk kolaborasi lintas disiplin, membangun kepercayaan diri, dan belajar melalui proyek nyata. Pengalaman yang kamu bangun bersama tim bisa menjadi bekal untuk kompetisi berikutnya, dan karier setelahnya.</p><span className="landing-impact-signoff"><UsersRound size={19} />Better opportunities begin with better connections.</span></div></div></section>
 
-        <section className="landing-cta-section"><div className="landing-container"><div className="landing-cta"><div><span><Sparkles size={14} /> Join Now</span><h2>Ready for<br />your next competition?</h2><p>Find the right people.<br />Build the right team.</p><div><Link className="landing-button cta-light" to={isAuthenticated ? "/teams/create" : "/register"}>{isAuthenticated ? "Create Team" : "Create Account"} <ArrowRight size={14} /></Link><Link className="landing-button cta-outline" to="/teams">Explore Teams</Link></div></div><ApprovedAsset name="register" alt="Mulai membangun team" /></div></div></section>
-      </main>
+      <section className="landing-section" id="faq" data-landing-nav><div className="landing-container landing-faq-grid"><SectionHeading eyebrow="A little clarity before you start" title="Good questions. Clear answers.">Everything you need to take your first step.</SectionHeading><FAQAccordion items={faqs} activeIndex={activeFAQ} onChange={setActiveFAQ} /></div></section>
 
-      <footer className="landing-footer"><div className="landing-container footer-grid"><div className="footer-brand"><div className="landing-brand"><span className="footer-logo-mark"><img src={brandLogo} alt="" /></span><strong>SkillMatch</strong></div><p>Find • Connect • Build</p></div><div><h3>Product</h3><a href="#explore">Explore Teams</a><a href="#features">Features</a><a href="#how-it-works">How It Works</a></div><div><h3>Resources</h3><a href="#faq">FAQ</a><a href="#about">About</a></div><div><h3>Account</h3>{isAuthenticated ? <><Link to="/dashboard">Dashboard</Link><Link to="/profile">Profile</Link></> : <><Link to="/login">Login</Link><Link to="/register">Register</Link></>}</div><div className="footer-contact"><Mail size={17} /><p>© 2026 SkillMatch.<br />All rights reserved.</p></div></div></footer>
-    </div>
-  )
+      <section className="landing-cta-section"><div className="landing-container"><div className="landing-cta"><div><span className="landing-kicker">Your next competition starts here</span><h2>Ready to find the right team?</h2><p>Build your profile, discover teammates, and start preparing for your next competition.</p></div><Actions authenticated={isAuthenticated} /></div></div></section>
+    </main>
+    <footer className="landing-footer"><div className="landing-container"><div className="footer-grid"><div className="footer-brand"><a href="#home" className="landing-brand"><span className="landing-brand-mark"><img src={brandLogo} alt="" /></span><strong>SkillMatch</strong></a><p>Find teammates. Build your future.<br />A place for students to grow together.</p></div><div><h3>Discover</h3><a href="#how-it-works">How It Works</a><a href="#features">Features</a><Link to="/teams">Explore Teams</Link></div><div><h3>SkillMatch</h3><a href="#about">About</a><a href="#faq">FAQ</a></div><div><h3>Your next step</h3><Link to={isAuthenticated ? '/dashboard' : '/register'}>{isAuthenticated ? 'Dashboard' : 'Get Started'}</Link><Link to={isAuthenticated ? '/profile' : '/login'}>{isAuthenticated ? 'Profile' : 'Login'}</Link></div></div><div className="footer-bottom"><span>© {new Date().getFullYear()} SkillMatch. All rights reserved.</span><span>Built for people who build together.<span className="footer-heart"> ♥</span></span></div></div></footer>
+  </div>
 }

@@ -1,5 +1,5 @@
 import { Menu, X } from 'lucide-react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import logo from '../../assets/branding/skillmatch-logo.png'
 
@@ -14,17 +14,25 @@ const links = [
 
 export default function LandingNavbar({ activeSection, isAuthenticated = false }) {
   const [open, setOpen] = useState(false)
+  const menuButton = useRef(null)
+
+  function handleKeyDown(event) {
+    if (event.key === 'Escape' && open) {
+      setOpen(false)
+      menuButton.current?.focus()
+    }
+  }
 
   return (
     <header className="landing-nav-shell">
-      <nav className="landing-nav" aria-label="Navigasi landing page">
+      <nav className="landing-nav" aria-label="Navigasi landing page" onKeyDown={handleKeyDown}>
         <a className="landing-brand" href="#home" aria-label="SkillMatch home" onClick={() => setOpen(false)}>
           <span className="landing-brand-mark"><img src={logo} alt="" /></span>
           <strong>Skill<span>Match</span></strong>
         </a>
-        <button className="landing-menu-toggle" type="button" aria-label={open ? 'Tutup navigasi' : 'Buka navigasi'} aria-expanded={open} onClick={() => setOpen((value) => !value)}>{open ? <X size={19} /> : <Menu size={19} />}</button>
-        <div className={`landing-nav-content ${open ? 'is-open' : ''}`}>
-          <div className="landing-links">{links.map(([id, label]) => <a className={activeSection === id ? 'active' : ''} href={`#${id}`} key={id} onClick={() => setOpen(false)}>{label}</a>)}</div>
+        <button ref={menuButton} className="landing-menu-toggle" type="button" aria-label={open ? 'Tutup navigasi' : 'Buka navigasi'} aria-expanded={open} aria-controls="landing-navigation" onClick={() => setOpen((value) => !value)}>{open ? <X size={19} /> : <Menu size={19} />}</button>
+        <div id="landing-navigation" className={`landing-nav-content ${open ? 'is-open' : ''}`}>
+          <div className="landing-links">{links.map(([id, label]) => <a className={activeSection === id ? 'active' : ''} aria-current={activeSection === id ? 'location' : undefined} href={`#${id}`} key={id} onClick={() => setOpen(false)}>{label}</a>)}</div>
           <div className="landing-nav-actions">
             {isAuthenticated ? <>
               <Link className="landing-button landing-button-outline" to="/profile" onClick={() => setOpen(false)}>Profile</Link>

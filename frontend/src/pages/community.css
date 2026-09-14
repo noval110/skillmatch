@@ -43,21 +43,6 @@
  .chat-history { padding: 14px; }
  .messages-page .topbar { flex-wrap: wrap; }
 }
-.profile-showcase { display: grid; gap: 18px; min-width: 0; }
-.showcase-section { padding: 24px; min-width: 0; }
-.showcase-section .section-heading { flex-wrap: wrap; gap: 12px; }
-.showcase-section h2 { font-size: 16px; }
-.showcase-list { display: grid; gap: 14px; }
-.showcase-item { padding: 18px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; min-width: 0; overflow-wrap: anywhere; }
-.showcase-item-heading { display: flex; justify-content: space-between; gap: 12px; }
-.showcase-item h3 { font-size: 15px; min-width: 0; }
-.showcase-item h3 svg { color: var(--accent-text); margin-right: 7px; vertical-align: middle; }
-.showcase-controls { display: flex; flex-shrink: 0; }
-.showcase-meta, .showcase-empty { color: var(--muted); font-size: 12px; margin-top: 8px; }
-.showcase-description { white-space: pre-wrap; color: var(--text-secondary); font-size: 13px; line-height: 1.7; margin-block: 12px; }
-.showcase-item .tag { white-space: normal; overflow-wrap: anywhere; }
-.showcase-item .community-actions a { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--accent-text); }
-.profile-page .profile-showcase { margin-top: 24px; }
 .community-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 12px; }
 .community-actions .text-link { border: 0; background: transparent; font: inherit; cursor: pointer; }
 .community-empty { display: grid; justify-items: center; gap: 14px; padding: 40px 20px; text-align: center; color: var(--text-secondary); }

@@ -1,9 +1,13 @@
-import { ChevronDown } from 'lucide-react'
+import { Plus, Minus } from 'lucide-react'
 
 export default function FAQAccordion({ items, activeIndex, onChange }) {
   return <div className="landing-faq-list">{items.map((item, index) => {
     const open = activeIndex === index
     const answerId = `landing-faq-answer-${index}`
-    return <article className={`landing-faq-item ${open ? 'is-open' : ''}`} key={item.question}><button type="button" aria-expanded={open} aria-controls={answerId} onClick={() => onChange(open ? -1 : index)}><span>{item.question}</span><ChevronDown size={15} /></button><div className="landing-faq-answer" id={answerId}><p>{item.answer}</p></div></article>
+    const questionId = `landing-faq-question-${index}`
+    return <article className={`landing-faq-item ${open ? 'is-open' : ''}`} key={item.question}>
+      <h3><button type="button" id={questionId} aria-expanded={open} aria-controls={answerId} onClick={() => onChange(open ? -1 : index)}><span>{item.question}</span>{open ? <Minus size={18} /> : <Plus size={18} />}</button></h3>
+      <div className="landing-faq-answer" id={answerId} role="region" aria-labelledby={questionId} hidden={!open}><p>{item.answer}</p></div>
+    </article>
   })}</div>
 }

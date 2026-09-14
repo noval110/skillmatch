@@ -37,6 +37,11 @@ func RegisterCommunityRoutes(e *echo.Echo, pool *pgxpool.Pool) {
 	api.POST("/conversations/:id/messages", wrap(SendMessage))
 	api.PUT("/conversations/:id/read", wrap(ReadConversation))
 	api.GET("/teams/recommended", wrap(GetRecommendedTeams))
+	api.GET("/teams/:id/readiness", wrap(GetTeamReadiness))
+	api.GET("/teams/:id/milestones", wrap(GetTeamMilestones))
+	api.POST("/teams/:id/milestones", wrap(CreateTeamMilestone))
+	api.PUT("/teams/:id/milestones/:milestone_id", wrap(UpdateTeamMilestone))
+	api.DELETE("/teams/:id/milestones/:milestone_id", wrap(DeleteTeamMilestone))
 }
 
 func apiError(c echo.Context, status int, message string) error {

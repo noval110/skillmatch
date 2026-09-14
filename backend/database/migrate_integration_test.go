@@ -91,7 +91,7 @@ func TestMigrationsFromEmptyDatabase(t *testing.T) {
 	if err := Migrate(ctx, pool); err != nil {
 		t.Fatal(err)
 	}
-	wantTables := []string{"conversation_members", "conversations", "join_requests", "messages", "notifications", "role_skills", "skills", "team_members", "team_roles", "teams", "user_achievements", "user_portfolios", "user_skills", "users"}
+	wantTables := []string{"conversation_members", "conversations", "join_requests", "messages", "notifications", "role_skills", "skills", "team_members", "team_milestones", "team_roles", "teams", "user_achievements", "user_portfolios", "user_skills", "users"}
 	if got := tables(); !reflect.DeepEqual(got, wantTables) {
 		t.Fatalf("tables after bootstrap: got %v, want %v", got, wantTables)
 	}
@@ -112,6 +112,8 @@ BEGIN
     INSERT INTO teams(name,owner_id,max_members,description,beginner_friendly,willing_to_mentor,competition_category,competition_type)
         VALUES ('Migration team',u,4,'Preserve description',true,true,'Research','Scientific Writing') RETURNING id INTO team;
     INSERT INTO team_members(team_id,user_id,role) VALUES (team,u,'Owner');
+    INSERT INTO team_milestones(team_id,title,description,status,progress,due_date,created_by)
+        VALUES (team,'Migration milestone','Preserve milestone','in_progress',40,CURRENT_DATE + 7,u);
     INSERT INTO team_roles(team_id,role_name,experience_preference) VALUES (team,'Developer','beginner') RETURNING id INTO role;
     INSERT INTO user_skills(user_id,skill_id,level) VALUES (u,s,'beginner');
     INSERT INTO role_skills(role_id,skill_id,required_level) VALUES (role,s,'intermediate');

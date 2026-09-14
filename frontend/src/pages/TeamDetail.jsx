@@ -9,7 +9,7 @@ import { experienceLabel } from '../utils/matching'
 import MatchBreakdown from '../components/MatchBreakdown'
 import { ArrowLeft, Edit3, LogOut, Plus, Trash2, UserMinus, Users } from 'lucide-react'
 import { useCallback, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import Badge from '../components/Badge'
 import Avatar from '../components/Avatar'
 import ConfirmDialog from '../components/ConfirmDialog'
@@ -17,6 +17,8 @@ import EmptyState from '../components/EmptyState'
 import LoadingSpinner from '../components/LoadingSpinner'
 import Modal from '../components/Modal'
 import Navbar from '../components/Navbar'
+import TeamReadinessPanel from '../components/readiness/TeamReadinessPanel'
+import TeamMilestonesPanel from '../components/milestones/TeamMilestonesPanel'
 import RoleCard from '../components/RoleCard'
 import SkillBadge from '../components/SkillBadge'
 import useAsync from '../hooks/useAsync'
@@ -35,7 +37,9 @@ export default function TeamDetail() {
   const [modal, setModal] = useState(null)
   const [selectedRoleId, setSelectedRoleId] = useState(null)
   const [formError, setFormError] = useState('')
-  const [activeTab, setActiveTab] = useState('roles')
+  const [tabParams, setTabParams] = useSearchParams()
+  const activeTab = ['roles', 'members', 'readiness', 'milestones', 'about'].includes(tabParams.get('tab')) ? tabParams.get('tab') : 'roles'
+  const setActiveTab = (tab) => setTabParams(current => { const next = new URLSearchParams(current); next.set('tab', tab); return next })
   const [confirmation, setConfirmation] = useState(null)
   const [confirmBusy, setConfirmBusy] = useState(false)
   const [confirmError, setConfirmError] = useState('')
@@ -90,12 +94,12 @@ export default function TeamDetail() {
           {isOwner ? <><button className="button button-secondary" onClick={() => openModal('edit-team')}><Edit3 size={16} />Edit</button><button className="button button-danger" onClick={confirmDeleteTeam}><Trash2 size={16} />Delete</button></> : isMember ? <button className="button button-secondary" onClick={confirmLeaveTeam}><LogOut size={16} />Leave Team</button> : <button className="button button-primary" onClick={() => openModal('join')}>Join Team</button>}
         </div>
       </section>
-      <div className="detail-tabs">{['roles', 'members', 'about'].map((tab) => <button key={tab} className={activeTab === tab ? 'active' : ''} onClick={() => setActiveTab(tab)}>{tab}</button>)}</div>
-      <div className={`detail-grid tab-${activeTab}`}>
+      <div className="detail-tabs">{['roles', 'members', 'readiness', 'milestones', 'about'].map((tab) => <button key={tab} className={activeTab === tab ? 'active' : ''} onClick={() => setActiveTab(tab)}>{tab}</button>)}</div>
+      {activeTab === 'readiness' ? (isOwner || isMember ? <TeamReadinessPanel team={team} owner={isOwner} onManage={() => setActiveTab('roles')} /> : <section className="panel"><h2>Readiness is available to team members.</h2><p>Join this team to view its detailed skill and profile analysis.</p></section>) : activeTab === 'milestones' ? (isOwner || isMember ? <TeamMilestonesPanel team={team} owner={isOwner} /> : <section className="panel"><h2>Competition workspace is available to team members.</h2><p>Join this team to view its private preparation milestones.</p></section>) : <div className={`detail-grid tab-${activeTab}`}>
         <section><div className="section-heading"><div><h2>Roles</h2><p>Pilih role untuk melihat kebutuhan skill dan match.</p></div>{isOwner && <button className="button button-secondary" onClick={() => openModal('add-role')}><Plus size={16} />Add Role</button>}</div>{team.roles.length ? <div className="role-list">{team.roles.map((role) => <RoleCard key={role.id} role={role} owner={isOwner} onSelect={chooseRole} onStatus={(item) => run(() => updateTeamRole(id, item.id, item.status === 'filled' ? 'active' : 'filled'))} onDelete={confirmDeleteRole} />)}</div> : <EmptyState title="Belum ada role" description="Owner belum menambahkan role yang dibutuhkan." />}</section>
         <aside className="panel members-panel"><div className="section-heading"><div><h2>Members</h2><p>{team.members.length} anggota saat ini</p></div></div><div className="member-list">{team.members.map((member) => <div className="member-row" key={member.id}><Link className="user-profile-link member-profile-link" to={`/users/${member.id}`}><Avatar name={member.name} src={resolveMediaURL(member.avatar_url)} /><span><strong>{member.name}</strong><small>{member.role}</small></span></Link>{Number(member.id) === Number(team.owner_id) && <Badge tone="neutral">Owner</Badge>}{isOwner && Number(member.id) !== userId && <button className="icon-button danger" onClick={() => confirmRemoveMember(member)}><UserMinus size={16} /></button>}</div>)}</div>{isOwner && <Link className="button button-secondary full-width" to={`/join-requests?team=${id}`}>View Join Requests</Link>}</aside>
         <section className="panel team-about"><h2>About this team</h2><p>{team.description || 'Belum ada deskripsi.'}</p><h3>Competition goal / idea</h3><p>{team.project_idea}</p><div className="about-meta"><span>Owner ID <strong>#{team.owner_id}</strong></span><span>Capacity <strong>{team.max_members} members</strong></span></div></section>
-      </div>
+      </div>}
     </div>
 
     <Modal open={modal === 'join'} title="Join Team" onClose={() => setModal(null)}><form className="stack-form" onSubmit={(event) => { event.preventDefault(); run(() => joinTeam(id, new FormData(event.currentTarget).get('message'))) }}>{formError && <div className="error-message">{formError}</div>}<label><span>Message</span><textarea name="message" rows="4" placeholder="Ceritakan kenapa kamu cocok untuk team ini..." required /></label><button className="button button-primary">Send Request</button></form></Modal>
