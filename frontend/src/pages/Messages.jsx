@@ -3,6 +3,9 @@ import {
   MessageCircle,
   Send,
   UsersRound,
+  Search,
+  X,
+  ArrowUpRight,
 } from 'lucide-react'
 import {
   Fragment,
@@ -26,6 +29,7 @@ import {
 } from '../services/api'
 import { getCurrentUserId } from '../utils/auth'
 import './community.css'
+import '../styles/messages.css'
 
 function isSameDay(first, second) {
   if (!first || !second) return false
@@ -103,15 +107,16 @@ function ConversationItem({ item, active }) {
     <Link
       className={`conversation-link ${active ? 'is-active' : ''}`}
       to={`/messages/${item.id}`}
+      aria-current={active ? 'page' : undefined}
     >
-      <Avatar
+      {team ? <span className="chat-team-avatar"><UsersRound size={21} /></span> : <Avatar
         name={name}
         src={
           team
             ? ''
             : resolveMediaURL(item.other_user?.avatar_url)
         }
-      />
+      />}
 
       <span className="conversation-copy">
         <span className="conversation-title-row">
@@ -403,7 +408,8 @@ function ChatThread({ id, onRead }) {
   const handleComposerKeyDown = (event) => {
     if (
       event.key === 'Enter' &&
-      !event.shiftKey
+      !event.shiftKey &&
+      !event.nativeEvent.isComposing
     ) {
       event.preventDefault()
 
@@ -429,7 +435,7 @@ function ChatThread({ id, onRead }) {
           to="/messages"
         >
           <ArrowLeft size={17} />
-          Messages
+          <span className="sr-only">Back to messages</span>
         </Link>
 
         {conversation && (
@@ -438,9 +444,7 @@ function ChatThread({ id, onRead }) {
               className="chat-header-target"
               to={`/teams/${conversation.team_id}`}
             >
-              <Avatar
-                name={conversation.team_name}
-              />
+              <span className="chat-team-avatar"><UsersRound size={23} /></span>
 
               <span>
                 <strong>
@@ -473,6 +477,11 @@ function ChatThread({ id, onRead }) {
               </span>
             </Link>
           )
+        )}
+        {conversation && (
+          <Link className="chat-details-link" to={teamChat ? `/teams/${conversation.team_id}` : `/users/${conversation.other_user?.id}`}>
+            {teamChat ? 'View team' : 'View profile'}<ArrowUpRight size={16} />
+          </Link>
         )}
       </header>
 
@@ -622,6 +631,7 @@ function ChatThread({ id, onRead }) {
             Message
           </label>
 
+          <div className="chat-composer-input">
           <textarea
             id="message-draft"
             name="content"
@@ -652,6 +662,8 @@ function ChatThread({ id, onRead }) {
               ? 'Sending...'
               : 'Send'}
           </button>
+          </div>
+          <div className="chat-composer-hint"><span>Enter to send <span aria-hidden="true">·</span> Shift + Enter for a new line</span><span>{draft.length.toLocaleString()} / 4,000</span></div>
         </form>
       )}
     </section>
@@ -662,6 +674,8 @@ export default function Messages() {
   const { conversationId } = useParams()
 
   const [pages, setPages] = useState(1)
+  const [query, setQuery] = useState('')
+  const [filter, setFilter] = useState('all')
 
   const loader = useCallback(async () => {
     const groups = await Promise.all(
@@ -688,13 +702,17 @@ export default function Messages() {
     reload,
   } = usePolling(loader, 10000)
 
+  const matchingConversations = data?.filter((item) =>
+    conversationName(item).toLowerCase().includes(query.trim().toLowerCase()),
+  ) || []
+
   const teamChats =
-    data?.filter(
+    matchingConversations.filter(
       (item) => item.type === 'team',
     ) || []
 
   const directMessages =
-    data?.filter(
+    matchingConversations.filter(
       (item) => item.type !== 'team',
     ) || []
 
@@ -706,6 +724,7 @@ export default function Messages() {
     <section className="conversation-group">
       <h3 className="conversation-group-title">
         {title}
+        <span>{items.length}</span>
       </h3>
 
       {items.length ? (
@@ -749,13 +768,27 @@ export default function Messages() {
           >
             <div className="conversation-list-heading">
               <div>
-                <h2>Messages</h2>
+                <span className="conversation-eyebrow">YOUR WORKSPACE</span>
+                <h2>Inbox <span>{data?.length || 0}</span></h2>
                 <p>
                   Your collaboration space.
                 </p>
               </div>
             </div>
+            <div className="conversation-controls">
+              <div className="conversation-search">
+                <Search size={17} aria-hidden="true" />
+                <input aria-label="Search conversations" placeholder="Search conversations..." value={query} onChange={(event) => setQuery(event.target.value)} />
+                {query && <button type="button" aria-label="Clear search" onClick={() => setQuery('')}><X size={15} /></button>}
+              </div>
+              <div className="conversation-filters" role="group" aria-label="Filter conversations">
+                {[['all', 'All chats'], ['team', 'Teams'], ['direct', 'Direct']].map(([value, label]) => (
+                  <button key={value} type="button" aria-pressed={filter === value} onClick={() => setFilter(value)}>{label}</button>
+                ))}
+              </div>
+            </div>
 
+            <div className="conversation-list-scroll">
             {error && (
               <div
                 className="error-message"
@@ -773,16 +806,16 @@ export default function Messages() {
               <LoadingSpinner />
             ) : data?.length ? (
               <>
-                {renderGroup(
+                {filter !== 'direct' && renderGroup(
                   'TEAM CHATS',
                   teamChats,
-                  'Join a team to start collaborating.',
+                  query ? 'No teams match your search.' : 'Join a team to start collaborating.',
                 )}
 
-                {renderGroup(
+                {filter !== 'team' && renderGroup(
                   'DIRECT MESSAGES',
                   directMessages,
-                  'Message someone from their profile.',
+                  query ? 'No people match your search.' : 'Message someone from their profile.',
                 )}
 
                 {data.length === pages * 50 && (
@@ -823,6 +856,8 @@ export default function Messages() {
                 </Link>
               </div>
             ) : null}
+            </div>
+            <div className="conversation-list-footer"><MessageCircle size={15} /><span>Great teamwork starts with a conversation.</span></div>
           </aside>
 
           {conversationId ? (
@@ -833,7 +868,8 @@ export default function Messages() {
             />
           ) : (
             <div className="chat-placeholder community-empty">
-              <MessageCircle size={34} />
+              <span className="chat-placeholder-icon"><MessageCircle size={34} /></span>
+              <span className="conversation-eyebrow">LET’S BUILD SOMETHING TOGETHER</span>
 
               <h3>
                 Choose a conversation
