@@ -26,3 +26,10 @@ backend/server
 .DS_Store
 Thumbs.db
 .neon
+
+# Development files
+*.log
+*.zip
+artifacts/
+.gocache/
+.runtime/
