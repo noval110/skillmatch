@@ -78,6 +78,7 @@ func GetRecommendedTeams(c echo.Context, pool *pgxpool.Pool) error {
 		if err = rows.Scan(&item.Team, &role, &item.MemberCount, &skills); err != nil {
 			return dbError(c, err)
 		}
+		item.Team.CoverURL = teamCoverURL(item.Team.ID)
 		item.Match = calculateRoleMatch(user, item.Team, role, skills)
 		item.MatchScore = item.Match.MatchScore
 		item.RecommendedRole = role.RoleName

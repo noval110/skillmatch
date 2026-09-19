@@ -4,6 +4,7 @@ import SkillSelect from '../components/SkillSelect'
 import { rolesFor, skillsForRole } from '../config/competitions'
 import TeamCompatibilityBadges from '../components/TeamCompatibilityBadges'
 import TeamPreferenceFields from '../components/TeamPreferenceFields'
+import TeamImageField from '../components/TeamImageField'
 import ExperiencePreferenceField from '../components/ExperiencePreferenceField'
 import { experienceLabel } from '../utils/matching'
 import MatchBreakdown from '../components/MatchBreakdown'
@@ -20,6 +21,7 @@ import {
 import { useCallback, useState } from 'react'
 import {
   Link,
+  useLocation,
   useNavigate,
   useParams,
   useSearchParams,
@@ -41,6 +43,7 @@ import {
   createTeamRole,
   deleteRoleSkill,
   deleteTeam,
+  deleteTeamCover,
   deleteTeamRole,
   getSkills,
   getTeamConversation,
@@ -49,6 +52,7 @@ import {
   removeTeamMember,
   resolveMediaURL,
   updateTeam,
+  uploadTeamCover,
   updateTeamRole,
 } from '../services/api'
 import { getCurrentUserId } from '../utils/auth'
@@ -57,6 +61,7 @@ import { loadTeamDetail } from '../utils/teams'
 export default function TeamDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
 
   const loader = useCallback(async () => {
     const [team, skills] = await Promise.all([
@@ -82,6 +87,7 @@ export default function TeamDetail() {
   const [modal, setModal] = useState(null)
   const [selectedRoleId, setSelectedRoleId] = useState(null)
   const [formError, setFormError] = useState('')
+  const [coverFile, setCoverFile] = useState(null)
 
   const [tabParams, setTabParams] = useSearchParams()
 
@@ -144,6 +150,7 @@ export default function TeamDetail() {
 
   const openModal = (name) => {
     setFormError('')
+    if (name === 'edit-team') setCoverFile(null)
     setModal(name)
   }
 
@@ -321,11 +328,19 @@ export default function TeamDetail() {
           </div>
         )}
 
+        {location.state?.teamImageError && (
+          <div className="error-message" role="alert">
+            Team berhasil dibuat, tetapi gambarnya belum tersimpan: {location.state.teamImageError}. Kamu bisa mencoba lagi melalui tombol Edit.
+          </div>
+        )}
+
         <section className="panel team-hero">
-          <div className="avatar avatar-large avatar-team">
-            {team.name
-              ?.slice(0, 2)
-              .toUpperCase()}
+          <div className={`team-hero-image ${team.cover_url ? 'has-image' : ''}`}>
+            {team.cover_url ? (
+              <img src={resolveMediaURL(team.cover_url)} alt={`Gambar ${team.name}`} />
+            ) : (
+              team.name?.slice(0, 2).toUpperCase()
+            )}
           </div>
 
           <div className="team-hero-copy">
@@ -755,8 +770,8 @@ export default function TeamDetail() {
                 event.currentTarget,
               )
 
-            run(() =>
-              updateTeam(id, {
+            run(async () => {
+              await updateTeam(id, {
                 competition_category:
                   form.get(
                     'competition_category',
@@ -787,8 +802,12 @@ export default function TeamDetail() {
                   form.has(
                     'willing_to_mentor',
                   ),
-              }),
-            )
+              })
+              if (coverFile) {
+                await uploadTeamCover(id, coverFile)
+                setCoverFile(null)
+              }
+            })
           }}
         >
           {formError && (
@@ -796,6 +815,15 @@ export default function TeamDetail() {
               {formError}
             </div>
           )}
+
+          <TeamImageField
+            currentURL={team.cover_url}
+            file={coverFile}
+            onFileChange={setCoverFile}
+            onRemove={() => run(() => deleteTeamCover(id))}
+            teamName={team.name}
+            compact
+          />
 
           <label>
             <span>Name</span>

@@ -23,9 +23,10 @@ export default function TeamCard({ team, roles = [], matchScore, compact = false
   const skills = [...new Set(roleRows.flatMap((role) => role.skills || []).map((skill) => skill.skill_name).filter(Boolean))]
   const normalizedName = team.name?.toLowerCase().replace(/[^a-z]/g, '') || ''
   const coverAsset = normalizedName.includes('hacksquad') ? 'hackSquad' : normalizedName.includes('devnova') ? 'devNova' : normalizedName.includes('bytebuilder') ? 'byteBuilders' : null
+  const customCover = resolveMediaURL(team.cover_url)
   if (dashboard) return (
     <article className="team-card dashboard-team-card">
-      <div className={`team-cover ${coverAsset ? '' : 'team-cover-fallback'}`}>{coverAsset && <ApprovedAsset name={coverAsset} alt={`${team.name} team cover`} />}<Badge tone={isRecruiting ? 'open' : 'filled'}>{isRecruiting ? 'Open' : 'Filled'}</Badge></div>
+      <div className={`team-cover ${customCover || coverAsset ? '' : 'team-cover-fallback'}`}>{customCover ? <img className="custom-team-cover" src={customCover} alt={`${team.name} team cover`} /> : coverAsset && <ApprovedAsset name={coverAsset} alt={`${team.name} team cover`} />}<Badge tone={isRecruiting ? 'open' : 'filled'}>{isRecruiting ? 'Open' : 'Filled'}</Badge></div>
       <Link className="dashboard-team-link" to={`/teams/${team.id}`}>
         <span className="avatar avatar-team">{team.name?.charAt(0)}</span><span><h3>{team.name}</h3>
         <p>{team.project_idea || team.description || 'No competition goal yet.'}</p>
@@ -42,7 +43,7 @@ export default function TeamCard({ team, roles = [], matchScore, compact = false
   return (
     <article className={`team-card ${compact ? 'team-card-compact' : ''}`}>
       <div className="team-card-head">
-        <div className="avatar avatar-team">{team.name?.slice(0, 2).toUpperCase()}</div>
+        <div className={`avatar avatar-team ${customCover ? 'team-avatar-image' : ''}`}>{customCover ? <img src={customCover} alt="" /> : team.name?.slice(0, 2).toUpperCase()}</div>
         <div><h3>{team.name}</h3><p>{team.project_idea || team.description || 'Tujuan kompetisi belum ditambahkan.'}</p></div>
         {membership ? <Badge tone={membershipLabel === 'Owner' ? 'owner' : 'neutral'}>{membershipLabel}</Badge> : <Badge tone={isRecruiting ? 'open' : 'filled'}>{isRecruiting ? 'Open' : 'Filled'}</Badge>}
       </div>

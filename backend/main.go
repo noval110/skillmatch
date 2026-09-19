@@ -127,6 +127,14 @@ func main() {
 		return handlers.UpdateTeam(c, conn)
 	}, authmiddleware.AuthMiddleware)
 
+	e.POST("/api/teams/:id/cover", func(c echo.Context) error {
+		return handlers.UploadTeamCover(c, conn)
+	}, authmiddleware.AuthMiddleware)
+
+	e.DELETE("/api/teams/:id/cover", func(c echo.Context) error {
+		return handlers.DeleteTeamCover(c, conn)
+	}, authmiddleware.AuthMiddleware)
+
 	e.DELETE("/api/teams/:id", func(c echo.Context) error {
 		return handlers.DeleteTeam(c, conn)
 	}, authmiddleware.AuthMiddleware)

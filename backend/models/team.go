@@ -33,6 +33,7 @@ type Team struct {
 	ProjectIdea         string `json:"project_idea"`
 	MaxMembers          int    `json:"max_members"`
 	OwnerID             int64  `json:"owner_id"`
+	CoverURL            string `json:"cover_url"`
 }
 
 type TeamMember struct {

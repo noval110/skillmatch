@@ -436,6 +436,27 @@ export const updateTeam = (
     body,
   })
 
+export const uploadTeamCover = (
+  teamId,
+  cover,
+) => {
+  const body = new FormData()
+  body.append('cover', cover)
+
+  return request(`/teams/${teamId}/cover`, {
+    method: 'POST',
+    body,
+    formData: true,
+  })
+}
+
+export const deleteTeamCover = (
+  teamId,
+) =>
+  request(`/teams/${teamId}/cover`, {
+    method: 'DELETE',
+  })
+
 export const deleteTeam = (
   teamId,
 ) =>

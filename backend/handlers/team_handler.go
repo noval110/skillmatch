@@ -145,6 +145,7 @@ func GetTeams(c echo.Context, conn *pgxpool.Pool) error {
 		}
 
 		teams = append(teams, team)
+		teams[len(teams)-1].CoverURL = teamCoverURL(team.ID)
 	}
 
 	if rows.Err() != nil {
@@ -234,6 +235,7 @@ func SearchTeams(c echo.Context, conn *pgxpool.Pool) error {
 		}
 
 		teams = append(teams, team)
+		teams[len(teams)-1].CoverURL = teamCoverURL(team.ID)
 	}
 
 	if rows.Err() != nil {
@@ -268,6 +270,7 @@ func GetTeamDetail(c echo.Context, conn *pgxpool.Pool) error {
 			"error": "Team not found",
 		})
 	}
+	team.CoverURL = teamCoverURL(team.ID)
 
 	rows, err := conn.Query(
 		context.Background(),
@@ -508,6 +511,9 @@ func DeleteTeam(c echo.Context, conn *pgxpool.Pool) error {
 		return c.JSON(http.StatusInternalServerError, map[string]string{
 			"error": "Failed to commit transaction",
 		})
+	}
+	if parsedTeamID, parseErr := strconv.ParseInt(teamID, 10, 64); parseErr == nil {
+		_ = removeTeamCoverFiles(parsedTeamID)
 	}
 
 	return c.JSON(http.StatusOK, map[string]string{

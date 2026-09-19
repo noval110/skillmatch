@@ -2,7 +2,7 @@ import { Bell, Home, House, LogOut, Menu, MessageCircle, Settings, UserRound, Us
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useEffect, useRef } from 'react'
 import { logout } from '../utils/auth'
-import logo from '../assets/branding/skillmatch-logo.png'
+import logo from '../assets/branding/skillmatch-logo-transparent.png'
 
 const links = [
   { to: '/', label: 'Home', icon: Home },
