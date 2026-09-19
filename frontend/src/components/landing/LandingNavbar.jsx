@@ -5,14 +5,14 @@ import {
 } from 'react'
 import { Link } from 'react-router-dom'
 
-import logo from '../../assets/branding/skillmatch-logo.png'
+import logo from '../../assets/branding/skillmatch-logo-transparent.png'
 
 const links = [
   ['home', 'Home'],
+  ['about', 'About'],
   ['how-it-works', 'How It Works'],
   ['features', 'Features'],
   ['explore', 'Explore'],
-  ['about', 'About'],
   ['faq', 'FAQ'],
 ]
 
@@ -107,7 +107,7 @@ export default function LandingNavbar({
                   }
                   onClick={close}
                 >
-                  {label}
+                  <strong>{label}</strong>
                 </a>
               ),
             )}

@@ -1,0 +1,70 @@
+.landing-hero.landing-hero-immersive {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: calc(100svh - 72px);
+  display: flex;
+  flex-direction: column;
+  background: #111314;
+}
+.landing-hero-immersive .hero-illustration {
+  position: absolute;
+  inset: 0 0 0 26%;
+  z-index: -2;
+  pointer-events: none;
+}
+.landing-hero-immersive .hero-illustration img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 54% center;
+}
+.landing-hero-immersive::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(0deg, #111314 0%, #111314eb 12%, transparent 40%),
+    linear-gradient(90deg, #111314 0%, #111314fa 25%, #111314d9 38%, #1113147a 50%, #1113141f 70%, transparent 100%);
+}
+.landing-hero-immersive .hero-edition { color: #e5d8d9; }
+.landing-hero-immersive .hero-edition > span:last-child { color: #33272b; }
+.landing-hero-immersive .landing-hero-grid {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  min-height: 590px;
+  padding-block: 65px 90px;
+}
+.landing-hero-immersive .landing-hero-copy { max-width: 540px; }
+.landing-hero-immersive .landing-hero-copy > p { color: #dedbd8; }
+.landing-hero-immersive .landing-eyebrow { color: #e3d0d4; }
+.landing-hero-immersive .landing-button-outline { background: #11131480; border-color: #777073; }
+.landing-hero-immersive .landing-button-outline:hover { background: #30262b; }
+.landing-hero-immersive .hero-competition-types { padding-bottom: 30px; }
+@media (min-width: 601px) and (max-width: 900px) {
+  .landing-hero-immersive .hero-illustration { left: 10%; }
+  .landing-hero-immersive .landing-hero-grid { min-height: 610px; }
+  .landing-hero-immersive::after {
+    background:
+      linear-gradient(0deg, #111314 0%, #111314e6 12%, transparent 50%),
+      linear-gradient(90deg, #111314ed 0%, #111314c9 35%, #11131459 70%, #11131426);
+  }
+  .landing-hero-immersive .hero-illustration img { object-position: 55% center; }
+}
+@media (max-width: 600px) {
+  .landing-hero.landing-hero-immersive { min-height: calc(100svh - 64px); }
+  .landing-hero-immersive .hero-illustration { inset: 0 0 auto; height: 470px; }
+  .landing-hero-immersive .hero-illustration img { object-position: center top; }
+  .landing-hero-immersive::after {
+    background: linear-gradient(180deg, #11131466 0, #11131400 110px, #11131426 230px, #111314d9 370px, #111314 470px);
+  }
+  .landing-hero-immersive .hero-edition { color: #fff; }
+  .landing-hero-immersive .landing-hero-grid { min-height: 0; padding-top: 260px; padding-bottom: 35px; }
+  .landing-hero-immersive .landing-hero-copy { width: 100%; max-width: none; }
+  .landing-hero-immersive .landing-hero-copy > p { max-width: 390px; }
+  .landing-hero-immersive .hero-competition-types { padding-bottom: 28px; }
+}

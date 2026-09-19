@@ -4,10 +4,8 @@ import {
   Bell,
   Check,
   ClipboardCheck,
-  Code2,
   Gauge,
   MessageCircle,
-  Palette,
   Search,
   Sparkles,
   Target,
@@ -18,8 +16,8 @@ import {
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import brandLogo from '../assets/branding/skillmatch-logo.png'
-import ApprovedAsset from '../components/ApprovedAsset'
+import brandLogo from '../assets/branding/skillmatch-logo-transparent.png'
+import HeroIllustration from '../components/landing/HeroIllustration'
 import FAQAccordion from '../components/landing/FAQAccordion'
 import LandingNavbar from '../components/landing/LandingNavbar'
 import useAuthenticated from '../hooks/useAuthenticated'
@@ -235,9 +233,10 @@ export default function LandingPage() {
 
       <main>
         <section
-          className="landing-hero"
+          className="landing-hero landing-hero-immersive"
           id="home"
         >
+          <HeroIllustration />
           <div className="landing-container hero-edition">
             <span>THE STUDENT TEAM-FINDING PLATFORM</span>
             <span>DIFFERENT STRENGTHS. SHARED AMBITION. <ArrowUpRight size={14} /></span>
@@ -288,17 +287,6 @@ export default function LandingPage() {
 
             </div>
 
-            <div className="landing-hero-visual">
-              <div className="hero-art-caption"><span>BETTER, TOGETHER.</span><ArrowUpRight size={25} /></div>
-              <div className="hero-art-frame">
-                <ApprovedAsset name="register" alt="Two students high-fiving as they build their team" />
-              </div>
-              <div className="hero-note hero-note-left">Good things start<br />with the right people.</div>
-              <div className="hero-role-label role-design"><Palette size={17} /> The creative eye</div>
-              <div className="hero-role-label role-code"><Code2 size={17} /> The technical mind</div>
-              <div className="hero-team-stamp" aria-hidden="true"><UsersRound size={26} /><span>ONE<br />SHARED GOAL</span></div>
-              <span className="hero-art-index">01 &mdash; FIND YOUR PEOPLE</span>
-            </div>
           </div>
 
           <div className="landing-container hero-competition-types">
