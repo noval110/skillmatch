@@ -85,7 +85,7 @@ export default function ProfileHero({
         {own && (
           <label
             className="profile-photo-button"
-            aria-label="Change profile photo"
+            aria-label={photoURL ? "Change profile photo" : "Add profile photo"}
           >
             <Camera size={16} />
             <input

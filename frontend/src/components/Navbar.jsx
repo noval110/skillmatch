@@ -33,12 +33,8 @@ export default function Navbar({
   const displayedUser = userProfile === undefined ? savedUser : userProfile;
   const userName = displayedUser?.name || "Account";
   const avatarURL = resolveMediaURL(displayedUser?.avatar_url);
-  const userAvatar = avatarURL ? (
+  const userAvatar = (
     <Avatar name={userName} src={avatarURL} size="small" />
-  ) : (
-    <span className="avatar account-initials" aria-hidden="true">
-      {userName.slice(0, 2).toUpperCase()}
-    </span>
   );
 
   useEffect(() => {

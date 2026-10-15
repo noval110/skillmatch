@@ -241,6 +241,8 @@ select {
 .avatar-tiny { width: 23px; height: 23px; }
 .avatar-team { border-radius: 11px; color: var(--accent-text); background: var(--primary-soft); }
 .avatar-large { width: 64px; height: 64px; font-size: 20px; }
+.avatar-placeholder { background: var(--chip); color: var(--muted); }
+.avatar-placeholder > svg { width: 52%; height: 52%; }
 .team-card-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; color: var(--muted); font-size: 11px; }
 .team-card-meta span { display: inline-flex; align-items: center; gap: 5px; }
 .team-needs { min-height: 20px; width: fit-content; padding: 4px 7px; border-radius: 5px; background: var(--chip); color: var(--text-secondary); font-size: 10px; font-weight: 600; line-height: 12px; }
