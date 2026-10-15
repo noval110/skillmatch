@@ -6,19 +6,13 @@ import {
   Search,
   X,
   ArrowUpRight,
-} from 'lucide-react'
-import {
-  Fragment,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
-import { Link, useParams } from 'react-router-dom'
-import Avatar from '../components/Avatar'
-import Navbar from '../components/Navbar'
-import LoadingSpinner from '../components/LoadingSpinner'
-import usePolling from '../hooks/usePolling'
+} from "lucide-react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import Avatar from "../components/Avatar";
+import Navbar from "../components/Navbar";
+import LoadingSpinner from "../components/LoadingSpinner";
+import usePolling from "../hooks/usePolling";
 import {
   getConversations,
   getConversation,
@@ -26,97 +20,97 @@ import {
   sendMessage,
   readConversation,
   resolveMediaURL,
-} from '../services/api'
-import { getCurrentUserId } from '../utils/auth'
-import './community.css'
-import '../styles/messages.css'
+} from "../services/api";
+import { getCurrentUserId } from "../utils/auth";
+import "./community.css";
+import "../styles/messages.css";
 
 function isSameDay(first, second) {
-  if (!first || !second) return false
+  if (!first || !second) return false;
 
-  const a = new Date(first)
-  const b = new Date(second)
+  const a = new Date(first);
+  const b = new Date(second);
 
   return (
     a.getFullYear() === b.getFullYear() &&
     a.getMonth() === b.getMonth() &&
     a.getDate() === b.getDate()
-  )
+  );
 }
 
 function formatMessageTime(value) {
-  if (!value) return ''
+  if (!value) return "";
 
   return new Date(value).toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 function formatConversationTime(value) {
-  if (!value) return ''
+  if (!value) return "";
 
-  const date = new Date(value)
-  const today = new Date()
+  const date = new Date(value);
+  const today = new Date();
 
   if (isSameDay(date, today)) {
     return date.toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-    })
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   }
 
   return date.toLocaleDateString([], {
-    day: 'numeric',
-    month: 'short',
-  })
+    day: "numeric",
+    month: "short",
+  });
 }
 
 function formatDateSeparator(value) {
-  const date = new Date(value)
-  const today = new Date()
+  const date = new Date(value);
+  const today = new Date();
 
-  const yesterday = new Date()
-  yesterday.setDate(today.getDate() - 1)
+  const yesterday = new Date();
+  yesterday.setDate(today.getDate() - 1);
 
-  if (isSameDay(date, today)) return 'Today'
-  if (isSameDay(date, yesterday)) return 'Yesterday'
+  if (isSameDay(date, today)) return "Today";
+  if (isSameDay(date, yesterday)) return "Yesterday";
 
   return date.toLocaleDateString([], {
-    day: 'numeric',
-    month: 'short',
-    year: date.getFullYear() !== today.getFullYear()
-      ? 'numeric'
-      : undefined,
-  })
+    day: "numeric",
+    month: "short",
+    year: date.getFullYear() !== today.getFullYear() ? "numeric" : undefined,
+  });
 }
 
 function conversationName(item) {
-  if (item.type === 'team') {
-    return item.team_name || 'Team Chat'
+  if (item.type === "team") {
+    return item.team_name || "Team Chat";
   }
 
-  return item.other_user?.name || 'Conversation'
+  return item.other_user?.name || "Conversation";
 }
 
 function ConversationItem({ item, active }) {
-  const team = item.type === 'team'
-  const name = conversationName(item)
+  const team = item.type === "team";
+  const name = conversationName(item);
 
   return (
     <Link
-      className={`conversation-link ${active ? 'is-active' : ''}`}
+      className={`conversation-link ${active ? "is-active" : ""}`}
       to={`/messages/${item.id}`}
-      aria-current={active ? 'page' : undefined}
+      aria-current={active ? "page" : undefined}
     >
-      {team ? <span className="chat-team-avatar"><UsersRound size={21} /></span> : <Avatar
-        name={name}
-        src={
-          team
-            ? ''
-            : resolveMediaURL(item.other_user?.avatar_url)
-        }
-      />}
+      {team ? (
+        <span className="chat-team-avatar">
+          <UsersRound size={21} />
+        </span>
+      ) : (
+        <Avatar
+          name={name}
+          src={team ? "" : resolveMediaURL(item.other_user?.avatar_url)}
+        />
+      )}
 
       <span className="conversation-copy">
         <span className="conversation-title-row">
@@ -135,11 +129,8 @@ function ConversationItem({ item, active }) {
         )}
 
         <small className="conversation-preview">
-          {item.last_message || (
-            team
-              ? 'Start collaborating with your team'
-              : 'Say hello'
-          )}
+          {item.last_message ||
+            (team ? "Start collaborating with your team" : "Say hello")}
         </small>
       </span>
 
@@ -148,312 +139,275 @@ function ConversationItem({ item, active }) {
           className="chat-unread"
           aria-label={`${item.unread_count} unread messages`}
         >
-          {item.unread_count > 99 ? '99+' : item.unread_count}
+          {item.unread_count > 99 ? "99+" : item.unread_count}
         </span>
       )}
     </Link>
-  )
+  );
 }
 
 function ChatThread({ id, onRead }) {
-  const [conversation, setConversation] = useState(null)
-  const [messages, setMessages] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-  const [sendError, setSendError] = useState('')
-  const [draft, setDraft] = useState('')
-  const [sending, setSending] = useState(false)
-  const [older, setOlder] = useState(false)
-  const [loadingOlder, setLoadingOlder] = useState(false)
+  const [conversation, setConversation] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [sendError, setSendError] = useState("");
+  const [draft, setDraft] = useState("");
+  const [sending, setSending] = useState(false);
+  const [older, setOlder] = useState(false);
+  const [loadingOlder, setLoadingOlder] = useState(false);
 
-  const refresh = useRef(() => {})
-  const scroll = useRef(null)
-  const latest = useRef(0)
-  const retryKey = useRef(null)
+  const refresh = useRef(() => {});
+  const scroll = useRef(null);
+  const latest = useRef(0);
+  const retryKey = useRef(null);
 
-  const userID = getCurrentUserId()
+  const userID = getCurrentUserId();
 
   useEffect(() => {
-    let active = true
-    let timer
-    let busy = false
-    let queued = false
+    let active = true;
+    let timer;
+    let busy = false;
+    let queued = false;
 
-    latest.current = 0
-    setMessages([])
-    setConversation(null)
-    setLoading(true)
-    setError('')
+    latest.current = 0;
+    setMessages([]);
+    setConversation(null);
+    setLoading(true);
+    setError("");
 
     const poll = async () => {
-      if (!active) return
+      if (!active) return;
 
       if (busy) {
-        queued = true
-        return
+        queued = true;
+        return;
       }
 
-      clearTimeout(timer)
+      clearTimeout(timer);
 
       if (document.hidden) {
-        timer = setTimeout(poll, 15000)
-        return
+        timer = setTimeout(poll, 15000);
+        return;
       }
 
-      busy = true
+      busy = true;
 
       try {
         const [info, batch] = await Promise.all([
           getConversation(id),
-          getMessages(
-            id,
-            latest.current
-              ? { after: latest.current }
-              : {},
-          ),
-        ])
+          getMessages(id, latest.current ? { after: latest.current } : {}),
+        ]);
 
-        if (!active) return
+        if (!active) return;
 
-        const initial = latest.current === 0
+        const initial = latest.current === 0;
 
         const nearBottom =
           !scroll.current ||
           scroll.current.scrollHeight -
             scroll.current.scrollTop -
             scroll.current.clientHeight <
-            120
+            120;
 
-        setConversation(info)
-        setError('')
+        setConversation(info);
+        setError("");
 
         if (initial) {
-          setOlder(batch.length === 50)
+          setOlder(batch.length === 50);
         }
 
         if (batch.length) {
-          latest.current = batch.at(-1).id
+          latest.current = batch.at(-1).id;
 
           setMessages((current) => {
-            const merged = new Map()
+            const merged = new Map();
 
-            ;[...current, ...batch].forEach((item) => {
-              merged.set(item.id, item)
-            })
+            [...current, ...batch].forEach((item) => {
+              merged.set(item.id, item);
+            });
 
-            return [...merged.values()].sort(
-              (a, b) => a.id - b.id,
-            )
-          })
+            return [...merged.values()].sort((a, b) => a.id - b.id);
+          });
 
           if (initial || nearBottom) {
             requestAnimationFrame(() => {
               if (scroll.current) {
-                scroll.current.scrollTop =
-                  scroll.current.scrollHeight
+                scroll.current.scrollTop = scroll.current.scrollHeight;
               }
-            })
+            });
           }
         }
 
         const receivedMessage = batch.some(
           (item) => Number(item.sender_id) !== userID,
-        )
+        );
 
         if (
           latest.current &&
           !document.hidden &&
           (info.unread_count > 0 || receivedMessage)
         ) {
-          await readConversation(id, latest.current)
+          await readConversation(id, latest.current);
 
           if (active) {
-            onRead()
-            window.dispatchEvent(
-              new Event('notifications-updated'),
-            )
+            onRead();
+            window.dispatchEvent(new Event("notifications-updated"));
           }
         }
       } catch (err) {
         if (active) {
-          setError(err.message)
+          setError(err.message);
         }
       } finally {
-        busy = false
+        busy = false;
 
         if (active) {
-          setLoading(false)
+          setLoading(false);
 
-          timer = setTimeout(
-            poll,
-            queued ? 0 : 5000,
-          )
+          timer = setTimeout(poll, queued ? 0 : 5000);
 
-          queued = false
+          queued = false;
         }
       }
-    }
+    };
 
-    refresh.current = poll
+    refresh.current = poll;
 
-    poll()
+    poll();
 
     const visible = () => {
       if (!document.hidden) {
-        poll()
+        poll();
       }
-    }
+    };
 
-    document.addEventListener(
-      'visibilitychange',
-      visible,
-    )
+    document.addEventListener("visibilitychange", visible);
 
     return () => {
-      active = false
-      clearTimeout(timer)
+      active = false;
+      clearTimeout(timer);
 
-      document.removeEventListener(
-        'visibilitychange',
-        visible,
-      )
-    }
-  }, [id, userID, onRead])
+      document.removeEventListener("visibilitychange", visible);
+    };
+  }, [id, userID, onRead]);
 
   const loadOlder = async () => {
-    if (!messages.length) return
+    if (!messages.length) return;
 
-    setLoadingOlder(true)
+    setLoadingOlder(true);
 
     try {
       const batch = await getMessages(id, {
         before: messages[0].id,
-      })
+      });
 
-      const oldHeight =
-        scroll.current?.scrollHeight || 0
+      const oldHeight = scroll.current?.scrollHeight || 0;
 
       setMessages((current) => {
-        const merged = new Map()
+        const merged = new Map();
 
-        ;[...batch, ...current].forEach((item) => {
-          merged.set(item.id, item)
-        })
+        [...batch, ...current].forEach((item) => {
+          merged.set(item.id, item);
+        });
 
-        return [...merged.values()].sort(
-          (a, b) => a.id - b.id,
-        )
-      })
+        return [...merged.values()].sort((a, b) => a.id - b.id);
+      });
 
-      setOlder(batch.length === 50)
+      setOlder(batch.length === 50);
 
       requestAnimationFrame(() => {
-        if (!scroll.current) return
+        if (!scroll.current) return;
 
-        scroll.current.scrollTop +=
-          scroll.current.scrollHeight -
-          oldHeight
-      })
+        scroll.current.scrollTop += scroll.current.scrollHeight - oldHeight;
+      });
     } catch (err) {
-      setError(err.message)
+      setError(err.message);
     } finally {
-      setLoadingOlder(false)
+      setLoadingOlder(false);
     }
-  }
+  };
 
   const send = async (event) => {
-    event.preventDefault()
+    event.preventDefault();
 
-    const content = draft.trim()
+    const content = draft.trim();
 
-    if (sending || !content) return
+    if (sending || !content) return;
 
-    setSending(true)
-    setSendError('')
+    setSending(true);
+    setSendError("");
 
     if (retryKey.current?.content !== content) {
       retryKey.current = {
         content,
         key: crypto.randomUUID(),
-      }
+      };
     }
 
     try {
       await sendMessage(id, {
         content,
-        client_message_id:
-          retryKey.current.key,
-      })
+        client_message_id: retryKey.current.key,
+      });
 
-      setDraft('')
-      retryKey.current = null
+      setDraft("");
+      retryKey.current = null;
 
-      await refresh.current()
+      await refresh.current();
 
-      onRead()
+      onRead();
 
       requestAnimationFrame(() => {
         if (scroll.current) {
-          scroll.current.scrollTop =
-            scroll.current.scrollHeight
+          scroll.current.scrollTop = scroll.current.scrollHeight;
         }
-      })
+      });
     } catch (err) {
-      setSendError(err.message)
+      setSendError(err.message);
     } finally {
-      setSending(false)
+      setSending(false);
     }
-  }
+  };
 
   const handleComposerKeyDown = (event) => {
     if (
-      event.key === 'Enter' &&
+      event.key === "Enter" &&
       !event.shiftKey &&
       !event.nativeEvent.isComposing
     ) {
-      event.preventDefault()
+      event.preventDefault();
 
-      if (
-        !sending &&
-        event.currentTarget.value.trim()
-      ) {
-        event.currentTarget.form?.requestSubmit()
+      if (!sending && event.currentTarget.value.trim()) {
+        event.currentTarget.form?.requestSubmit();
       }
     }
-  }
+  };
 
-  const teamChat = conversation?.type === 'team'
+  const teamChat = conversation?.type === "team";
 
   return (
-    <section
-      className="chat-thread"
-      aria-label="Conversation"
-    >
+    <section className="chat-thread" aria-label="Conversation">
       <header className="chat-header">
-        <Link
-          className="back-link chat-back"
-          to="/messages"
-        >
+        <Link className="back-link chat-back" to="/messages">
           <ArrowLeft size={17} />
           <span className="sr-only">Back to messages</span>
         </Link>
 
-        {conversation && (
-          teamChat ? (
+        {conversation &&
+          (teamChat ? (
             <Link
               className="chat-header-target"
               to={`/teams/${conversation.team_id}`}
             >
-              <span className="chat-team-avatar"><UsersRound size={23} /></span>
+              <span className="chat-team-avatar">
+                <UsersRound size={23} />
+              </span>
 
               <span>
-                <strong>
-                  {conversation.team_name}
-                </strong>
+                <strong>{conversation.team_name}</strong>
 
-                <small>
-                  {conversation.member_count} members
-                </small>
+                <small>{conversation.member_count} members</small>
               </span>
             </Link>
           ) : (
@@ -463,33 +417,33 @@ function ChatThread({ id, onRead }) {
             >
               <Avatar
                 name={conversation.other_user?.name}
-                src={resolveMediaURL(
-                  conversation.other_user?.avatar_url,
-                )}
+                src={resolveMediaURL(conversation.other_user?.avatar_url)}
               />
 
               <span>
-                <strong>
-                  {conversation.other_user?.name}
-                </strong>
+                <strong>{conversation.other_user?.name}</strong>
 
                 <small>Direct message</small>
               </span>
             </Link>
-          )
-        )}
+          ))}
         {conversation && (
-          <Link className="chat-details-link" to={teamChat ? `/teams/${conversation.team_id}` : `/users/${conversation.other_user?.id}`}>
-            {teamChat ? 'View team' : 'View profile'}<ArrowUpRight size={16} />
+          <Link
+            className="chat-details-link"
+            to={
+              teamChat
+                ? `/teams/${conversation.team_id}`
+                : `/users/${conversation.other_user?.id}`
+            }
+          >
+            {teamChat ? "View team" : "View profile"}
+            <ArrowUpRight size={16} />
           </Link>
         )}
       </header>
 
       {error && (
-        <div
-          className="error-message"
-          role="alert"
-        >
+        <div className="error-message" role="alert">
           {error}
 
           <button
@@ -501,17 +455,11 @@ function ChatThread({ id, onRead }) {
         </div>
       )}
 
-      <div
-        className="chat-history"
-        ref={scroll}
-        aria-label="Messages"
-      >
+      <div className="chat-history" ref={scroll} aria-label="Messages">
         {loading ? (
           <LoadingSpinner />
         ) : !conversation ? (
-          <div className="community-empty">
-            Conversation unavailable.
-          </div>
+          <div className="community-empty">Conversation unavailable.</div>
         ) : (
           <>
             {older && (
@@ -520,79 +468,55 @@ function ChatThread({ id, onRead }) {
                 disabled={loadingOlder}
                 onClick={loadOlder}
               >
-                {loadingOlder
-                  ? 'Loading...'
-                  : 'Load older messages'}
+                {loadingOlder ? "Loading..." : "Load older messages"}
               </button>
             )}
 
             {messages.length ? (
               messages.map((item, index) => {
-                const previous =
-                  index > 0
-                    ? messages[index - 1]
-                    : null
+                const previous = index > 0 ? messages[index - 1] : null;
 
-                const own =
-                  Number(item.sender_id) === userID
+                const own = Number(item.sender_id) === userID;
 
                 const newDay =
-                  !previous ||
-                  !isSameDay(
-                    previous.created_at,
-                    item.created_at,
-                  )
+                  !previous || !isSameDay(previous.created_at, item.created_at);
 
                 const newSender =
                   !previous ||
-                  Number(previous.sender_id) !==
-                    Number(item.sender_id) ||
-                  newDay
+                  Number(previous.sender_id) !== Number(item.sender_id) ||
+                  newDay;
 
                 return (
                   <Fragment key={item.id}>
                     {newDay && (
                       <div className="chat-date-separator">
-                        <span>
-                          {formatDateSeparator(
-                            item.created_at,
-                          )}
-                        </span>
+                        <span>{formatDateSeparator(item.created_at)}</span>
                       </div>
                     )}
 
                     <article
                       className={[
-                        'chat-bubble',
-                        own ? 'is-own' : '',
-                        newSender
-                          ? 'is-new-sender'
-                          : 'is-continuation',
+                        "chat-bubble",
+                        own ? "is-own" : "",
+                        newSender ? "is-new-sender" : "is-continuation",
                       ]
                         .filter(Boolean)
-                        .join(' ')}
+                        .join(" ")}
                     >
-                      {teamChat &&
-                        !own &&
-                        newSender && (
-                          <strong className="chat-sender">
-                            {item.sender_name ||
-                              'Team member'}
-                          </strong>
-                        )}
+                      {teamChat && !own && newSender && (
+                        <strong className="chat-sender">
+                          {item.sender_name || "Team member"}
+                        </strong>
+                      )}
 
                       <p>{item.content}</p>
 
-                      <time
-                        dateTime={item.created_at}
-                      >
-                        {formatMessageTime(
-                          item.created_at,
-                        )}
+                      <time dateTime={item.created_at}>
+                        {formatMessageTime(item.created_at)}
                       </time>
                     </article>
                   </Fragment>
-                )
+                );
               })
             ) : (
               <div className="community-empty">
@@ -600,8 +524,8 @@ function ChatThread({ id, onRead }) {
 
                 <p>
                   {teamChat
-                    ? 'Start planning with your team.'
-                    : 'Start the conversation. Say hello!'}
+                    ? "Start planning with your team."
+                    : "Start the conversation. Say hello!"}
                 </p>
               </div>
             )}
@@ -610,117 +534,83 @@ function ChatThread({ id, onRead }) {
       </div>
 
       {conversation && (
-        <form
-          className="chat-composer"
-          onSubmit={send}
-        >
+        <form className="chat-composer" onSubmit={send}>
           {sendError && (
-            <div
-              className="error-message"
-              role="alert"
-            >
-              {sendError}. Your draft is
-              preserved.
+            <div className="error-message" role="alert">
+              {sendError}. Your draft is preserved.
             </div>
           )}
 
-          <label
-            className="sr-only"
-            htmlFor="message-draft"
-          >
+          <label className="sr-only" htmlFor="message-draft">
             Message
           </label>
 
           <div className="chat-composer-input">
-          <textarea
-            id="message-draft"
-            name="content"
-            placeholder={
-              teamChat
-                ? 'Message your team...'
-                : 'Write a message...'
-            }
-            rows={2}
-            maxLength={4000}
-            value={draft}
-            disabled={sending}
-            onChange={(event) =>
-              setDraft(event.target.value)
-            }
-            onKeyDown={handleComposerKeyDown}
-          />
+            <textarea
+              id="message-draft"
+              name="content"
+              placeholder={
+                teamChat ? "Message your team..." : "Write a message..."
+              }
+              rows={2}
+              maxLength={4000}
+              value={draft}
+              disabled={sending}
+              onChange={(event) => setDraft(event.target.value)}
+              onKeyDown={handleComposerKeyDown}
+            />
 
-          <button
-            className="button button-primary"
-            disabled={
-              sending || !draft.trim()
-            }
-          >
-            <Send size={17} />
+            <button
+              className="button button-primary"
+              disabled={sending || !draft.trim()}
+            >
+              <Send size={17} />
 
-            {sending
-              ? 'Sending...'
-              : 'Send'}
-          </button>
+              {sending ? "Sending..." : "Send"}
+            </button>
           </div>
-          <div className="chat-composer-hint"><span>Enter to send <span aria-hidden="true">·</span> Shift + Enter for a new line</span><span>{draft.length.toLocaleString()} / 4,000</span></div>
+          <div className="chat-composer-hint">
+            <span>
+              Enter to send <span aria-hidden="true">·</span> Shift + Enter for
+              a new line
+            </span>
+            <span>{draft.length.toLocaleString()} / 4,000</span>
+          </div>
         </form>
       )}
     </section>
-  )
+  );
 }
 
 export default function Messages() {
-  const { conversationId } = useParams()
+  const { conversationId } = useParams();
 
-  const [pages, setPages] = useState(1)
-  const [query, setQuery] = useState('')
-  const [filter, setFilter] = useState('all')
+  const [pages, setPages] = useState(1);
+  const [query, setQuery] = useState("");
+  const [filter, setFilter] = useState("all");
 
   const loader = useCallback(async () => {
     const groups = await Promise.all(
-      Array.from(
-        { length: pages },
-        (_, page) =>
-          getConversations(page * 50),
-      ),
-    )
+      Array.from({ length: pages }, (_, page) => getConversations(page * 50)),
+    );
 
-    return [
-      ...new Map(
-        groups
-          .flat()
-          .map((item) => [item.id, item]),
-      ).values(),
-    ]
-  }, [pages])
+    return [...new Map(groups.flat().map((item) => [item.id, item])).values()];
+  }, [pages]);
 
-  const {
-    data,
-    loading,
-    error,
-    reload,
-  } = usePolling(loader, 10000)
+  const { data, loading, error, reload } = usePolling(loader, 10000);
 
-  const matchingConversations = data?.filter((item) =>
-    conversationName(item).toLowerCase().includes(query.trim().toLowerCase()),
-  ) || []
+  const matchingConversations =
+    data?.filter((item) =>
+      conversationName(item).toLowerCase().includes(query.trim().toLowerCase()),
+    ) || [];
 
   const teamChats =
-    matchingConversations.filter(
-      (item) => item.type === 'team',
-    ) || []
+    matchingConversations.filter((item) => item.type === "team") || [];
 
   const directMessages =
-    matchingConversations.filter(
-      (item) => item.type !== 'team',
-    ) || []
+    matchingConversations.filter((item) => item.type !== "team") || [];
 
-  const renderGroup = (
-    title,
-    items,
-    emptyText,
-  ) => (
+  const renderGroup = (title, items, emptyText) => (
     <section className="conversation-group">
       <h3 className="conversation-group-title">
         {title}
@@ -732,19 +622,14 @@ export default function Messages() {
           <ConversationItem
             key={item.id}
             item={item}
-            active={
-              String(item.id) ===
-              String(conversationId)
-            }
+            active={String(item.id) === String(conversationId)}
           />
         ))
       ) : (
-        <p className="conversation-group-empty">
-          {emptyText}
-        </p>
+        <p className="conversation-group-empty">{emptyText}</p>
       )}
     </section>
-  )
+  );
 
   return (
     <div className="messages-page">
@@ -757,107 +642,121 @@ export default function Messages() {
       <div className="page-body community-body">
         <div
           className={`panel messages-layout ${
-            conversationId
-              ? 'has-active'
-              : ''
+            conversationId ? "has-active" : ""
           }`}
         >
-          <aside
-            className="conversation-list"
-            aria-label="Conversations"
-          >
+          <aside className="conversation-list" aria-label="Conversations">
             <div className="conversation-list-heading">
               <div>
                 <span className="conversation-eyebrow">YOUR WORKSPACE</span>
-                <h2>Inbox <span>{data?.length || 0}</span></h2>
-                <p>
-                  Your collaboration space.
-                </p>
+                <h2>
+                  Inbox <span>{data?.length || 0}</span>
+                </h2>
+                <p>Your collaboration space.</p>
               </div>
             </div>
             <div className="conversation-controls">
               <div className="conversation-search">
                 <Search size={17} aria-hidden="true" />
-                <input aria-label="Search conversations" placeholder="Search conversations..." value={query} onChange={(event) => setQuery(event.target.value)} />
-                {query && <button type="button" aria-label="Clear search" onClick={() => setQuery('')}><X size={15} /></button>}
+                <input
+                  aria-label="Search conversations"
+                  placeholder="Search conversations..."
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                />
+                {query && (
+                  <button
+                    type="button"
+                    aria-label="Clear search"
+                    onClick={() => setQuery("")}
+                  >
+                    <X size={15} />
+                  </button>
+                )}
               </div>
-              <div className="conversation-filters" role="group" aria-label="Filter conversations">
-                {[['all', 'All chats'], ['team', 'Teams'], ['direct', 'Direct']].map(([value, label]) => (
-                  <button key={value} type="button" aria-pressed={filter === value} onClick={() => setFilter(value)}>{label}</button>
+              <div
+                className="conversation-filters"
+                role="group"
+                aria-label="Filter conversations"
+              >
+                {[
+                  ["all", "All chats"],
+                  ["team", "Teams"],
+                  ["direct", "Direct"],
+                ].map(([value, label]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    aria-pressed={filter === value}
+                    onClick={() => setFilter(value)}
+                  >
+                    {label}
+                  </button>
                 ))}
               </div>
             </div>
 
             <div className="conversation-list-scroll">
-            {error && (
-              <div
-                className="error-message"
-                role="alert"
-              >
-                {error}
+              {error && (
+                <div className="error-message" role="alert">
+                  {error}
 
-                <button onClick={reload}>
-                  Retry
-                </button>
-              </div>
-            )}
+                  <button onClick={reload}>Retry</button>
+                </div>
+              )}
 
-            {loading && !data ? (
-              <LoadingSpinner />
-            ) : data?.length ? (
-              <>
-                {filter !== 'direct' && renderGroup(
-                  'TEAM CHATS',
-                  teamChats,
-                  query ? 'No teams match your search.' : 'Join a team to start collaborating.',
-                )}
+              {loading && !data ? (
+                <LoadingSpinner />
+              ) : data?.length ? (
+                <>
+                  {filter !== "direct" &&
+                    renderGroup(
+                      "TEAM CHATS",
+                      teamChats,
+                      query
+                        ? "No teams match your search."
+                        : "Join a team to start collaborating.",
+                    )}
 
-                {filter !== 'team' && renderGroup(
-                  'DIRECT MESSAGES',
-                  directMessages,
-                  query ? 'No people match your search.' : 'Message someone from their profile.',
-                )}
+                  {filter !== "team" &&
+                    renderGroup(
+                      "DIRECT MESSAGES",
+                      directMessages,
+                      query
+                        ? "No people match your search."
+                        : "Message someone from their profile.",
+                    )}
 
-                {data.length === pages * 50 && (
-                  <button
-                    className="button button-secondary"
-                    onClick={() =>
-                      setPages(
-                        (current) =>
-                          current + 1,
-                      )
-                    }
-                  >
-                    Load more conversations
-                  </button>
-                )}
-              </>
-            ) : !error ? (
-              <div className="community-empty">
-                <MessageCircle size={28} />
+                  {data.length === pages * 50 && (
+                    <button
+                      className="button button-secondary"
+                      onClick={() => setPages((current) => current + 1)}
+                    >
+                      Load more conversations
+                    </button>
+                  )}
+                </>
+              ) : !error ? (
+                <div className="community-empty">
+                  <MessageCircle size={28} />
 
-                <h3>
-                  Your conversations will
-                  appear here.
-                </h3>
+                  <h3>Your conversations will appear here.</h3>
 
-                <p>
-                  Message a teammate from
-                  their profile or join a
-                  team to start
-                  collaborating.
-                </p>
+                  <p>
+                    Message a teammate from their profile or join a team to
+                    start collaborating.
+                  </p>
 
-                <Link
-                  className="button button-primary"
-                  to="/teams"
-                >
-                  Explore Teams
-                </Link>
-              </div>
-            ) : null}
+                  <Link className="button button-primary" to="/teams">
+                    Explore Teams
+                  </Link>
+                </div>
+              ) : null}
             </div>
-            <div className="conversation-list-footer"><MessageCircle size={15} /><span>Great teamwork starts with a conversation.</span></div>
+            <div className="conversation-list-footer">
+              <MessageCircle size={15} />
+              <span>Great teamwork starts with a conversation.</span>
+            </div>
           </aside>
 
           {conversationId ? (
@@ -868,21 +767,20 @@ export default function Messages() {
             />
           ) : (
             <div className="chat-placeholder community-empty">
-              <span className="chat-placeholder-icon"><MessageCircle size={34} /></span>
-              <span className="conversation-eyebrow">LET’S BUILD SOMETHING TOGETHER</span>
+              <span className="chat-placeholder-icon">
+                <MessageCircle size={34} />
+              </span>
+              <span className="conversation-eyebrow">
+                LET’S BUILD SOMETHING TOGETHER
+              </span>
 
-              <h3>
-                Choose a conversation
-              </h3>
+              <h3>Choose a conversation</h3>
 
-              <p>
-                Open a team chat or direct
-                message to start talking.
-              </p>
+              <p>Open a team chat or direct message to start talking.</p>
             </div>
           )}
         </div>
       </div>
     </div>
-  )
+  );
 }

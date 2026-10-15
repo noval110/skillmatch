@@ -20,6 +20,9 @@ SQL files are embedded in the Go binary and executed in sorted filename order:
 8. `007_team_chat.sql`: adds one unique conversation per team and a per-member
    read watermark while preserving all existing direct conversations and messages.
 
+9. `008_google_auth.sql`: adds the optional Google subject and its unique index,
+   preserving existing passwords and application accounts.
+
 Keep zero-padded numeric filename prefixes. Every migration must be repeatable:
 the runner reapplies the ordered files at startup. Existing tables are retained by
 `CREATE TABLE IF NOT EXISTS`; later migrations add only missing columns/constraints.

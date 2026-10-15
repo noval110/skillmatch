@@ -60,6 +60,8 @@ func main() {
 	})
 
 	// Auth
+	e.POST("/api/auth/google", handlers.NewGoogleAuthHandler(conn, os.Getenv("GOOGLE_CLIENT_ID")))
+
 	e.POST("/api/register", func(c echo.Context) error {
 		return handlers.Register(c, conn)
 	})

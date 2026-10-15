@@ -77,6 +77,14 @@ export const loginUser = (
     auth: false,
   })
 
+export const loginWithGoogle = (credential, experienceLevel = 'beginner') =>
+  request('/auth/google', {
+    method: 'POST',
+    auth: false,
+    body: { credential, experience_level: experienceLevel },
+    errorMessage: 'Gagal masuk dengan Google. Silakan coba lagi.',
+  })
+
 export const registerUser = (
   name,
   email,

@@ -5,6 +5,8 @@
 | Service | Variable | Value |
 | --- | --- | --- |
 | Vercel | `VITE_API_URL` | `https://<render-service>.onrender.com/api` (include `/api`) |
+| Vercel | `VITE_GOOGLE_CLIENT_ID` | Google OAuth Web application Client ID; rebuild frontend after setting |
+| Render | `GOOGLE_CLIENT_ID` | Same Google Client ID as the frontend |
 | Render | `DATABASE_URL` | Neon PostgreSQL connection string, including its TLS options |
 | Render | `JWT_SECRET` | A strong random secret, kept stable across deploys; the Blueprint generates one |
 | Render | `FRONTEND_URL` | Exact frontend origin, e.g. `https://<project>.vercel.app`, without a path |
@@ -14,6 +16,10 @@
 `VITE_API_URL` is public and embedded at build time. Redeploy Vercel after changing it. Keep database credentials and JWT secrets exclusively on the backend. CORS allows the configured frontend origin and `http://localhost:5173` / `http://127.0.0.1:5173`. It does not enable credentials or wildcard origins. A new production/custom domain requires updating `FRONTEND_URL` on Render. Arbitrary Vercel preview domains are not allowed automatically.
 
 ## Neon database
+
+For Google login and registration, follow [Google authentication setup](GOOGLE_AUTH.md)
+to create the OAuth client and authorize your frontend origins. Email/password
+authentication remains available when Google is not configured.
 
 1. Create a Neon project and database, choosing a region near the backend.
 2. In **Connect**, copy the PostgreSQL connection string. Use the direct connection endpoint for this long-running service, which already uses `pgxpool` and runs migrations on startup. Preserve the supplied TLS parameters (such as `sslmode=require`); never substitute local `sslmode=disable` in production. [Neon connection guidance](https://neon.com/docs/connect/connection-errors)

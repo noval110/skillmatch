@@ -1,3 +1,8 @@
+export function saveSession(data) {
+  localStorage.setItem('token', data.token)
+  localStorage.setItem('currentUser', JSON.stringify(data.user))
+}
+
 export function getTokenPayload() {
   const token = localStorage.getItem('token')
   if (!token) return null

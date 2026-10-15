@@ -142,8 +142,15 @@ func Login(c echo.Context, conn *pgxpool.Pool) error {
 		})
 	}
 
-	//generate JWT token
+	return authSession(c, id, name, email)
+}
+
+// Password and Google logins issue the same application session.
+func authSession(c echo.Context, id int64, name, email string) error {
 	secret := os.Getenv("JWT_SECRET")
+	if secret == "" {
+		return c.JSON(http.StatusServiceUnavailable, map[string]string{"error": "Authentication is not configured"})
+	}
 
 	claims := jwt.MapClaims{
 		"user_id": id,

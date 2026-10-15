@@ -1,41 +1,34 @@
-import { Menu, X } from 'lucide-react'
-import {
-  useRef,
-  useState,
-} from 'react'
-import { Link } from 'react-router-dom'
+import { Menu, X } from "lucide-react";
+import { useRef, useState } from "react";
+import { Link } from "react-router-dom";
 
-import logo from '../../assets/branding/skillmatch-logo-transparent.png'
+import logo from "../../assets/branding/skillmatch-logo-transparent.png";
 
 const links = [
-  ['home', 'Home'],
-  ['about', 'About'],
-  ['how-it-works', 'How It Works'],
-  ['features', 'Features'],
-  ['explore', 'Explore'],
-  ['faq', 'FAQ'],
-]
+  ["home", "Home"],
+  ["about", "About"],
+  ["how-it-works", "How It Works"],
+  ["features", "Features"],
+  ["explore", "Explore"],
+  ["faq", "FAQ"],
+];
 
 export default function LandingNavbar({
   activeSection,
   isAuthenticated = false,
 }) {
-  const [open, setOpen] =
-    useState(false)
+  const [open, setOpen] = useState(false);
 
-  const menuButton = useRef(null)
+  const menuButton = useRef(null);
 
-  const close = () => setOpen(false)
+  const close = () => setOpen(false);
 
   const handleKeyDown = (event) => {
-    if (
-      event.key === 'Escape' &&
-      open
-    ) {
-      close()
-      menuButton.current?.focus()
+    if (event.key === "Escape" && open) {
+      close();
+      menuButton.current?.focus();
     }
-  }
+  };
 
   return (
     <header className="landing-nav-shell">
@@ -54,63 +47,37 @@ export default function LandingNavbar({
             <img src={logo} alt="" />
           </span>
 
-          <strong>
-            SkillMatch
-          </strong>
+          <strong>SkillMatch</strong>
         </a>
 
         <button
           ref={menuButton}
           className="landing-menu-toggle"
           type="button"
-          aria-label={
-            open
-              ? 'Close navigation'
-              : 'Open navigation'
-          }
+          aria-label={open ? "Close navigation" : "Open navigation"}
           aria-expanded={open}
           aria-controls="landing-navigation"
-          onClick={() =>
-            setOpen(
-              (current) => !current,
-            )
-          }
+          onClick={() => setOpen((current) => !current)}
         >
-          {open ? (
-            <X size={18} />
-          ) : (
-            <Menu size={18} />
-          )}
+          {open ? <X size={18} /> : <Menu size={18} />}
         </button>
 
         <div
           id="landing-navigation"
-          className={`landing-nav-content ${
-            open ? 'is-open' : ''
-          }`}
+          className={`landing-nav-content ${open ? "is-open" : ""}`}
         >
           <div className="landing-links">
-            {links.map(
-              ([id, label]) => (
-                <a
-                  key={id}
-                  href={`#${id}`}
-                  className={
-                    activeSection === id
-                      ? 'active'
-                      : ''
-                  }
-                  aria-current={
-                    activeSection === id
-                      ? 'location'
-                      : undefined
-                  }
-                  onClick={close}
-                >
-                  <strong>{label}</strong>
-                </a>
-              ),
-            )}
+            {links.map(([id, label]) => (
+              <a
+                key={id}
+                href={`#${id}`}
+                className={activeSection === id ? "active" : ""}
+                aria-current={activeSection === id ? "location" : undefined}
+                onClick={close}
+              >
+                <strong>{label}</strong>
+              </a>
+            ))}
           </div>
 
           <div className="landing-nav-actions">
@@ -155,5 +122,5 @@ export default function LandingNavbar({
         </div>
       </nav>
     </header>
-  )
+  );
 }
