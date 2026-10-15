@@ -141,6 +141,9 @@ export default function GoogleAuthButton({
 
   return (
     <div className="google-auth" data-status={status}>
+      <div className="auth-divider">
+        <span>atau lanjutkan dengan Google</span>
+      </div>
       <div className="google-auth-card">
         <div className="google-auth-heading">
           <span className="google-auth-eyebrow"><Sparkles size={13} aria-hidden="true" /> Akses lebih praktis</span>
@@ -194,9 +197,6 @@ export default function GoogleAuthButton({
                 ? "Sebentar, kami sedang menyiapkan akunmu."
                 : "Password Google tetap pribadi."}</span>
         </p>
-      </div>
-      <div className="auth-divider">
-        <span>atau lanjutkan dengan email</span>
       </div>
     </div>
   );

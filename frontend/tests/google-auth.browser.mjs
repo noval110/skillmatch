@@ -101,6 +101,7 @@ const mock = `(() => {
     if (pathname === '/api/auth/google') {
       window.__googleRequests.push(JSON.parse(options.body));
       await new Promise(resolve => setTimeout(resolve, 80));
+      if (window.__legacyGoogleBackend) return new Response(JSON.stringify({ error: 'Missing Authorization header' }), {status:401});
       if (window.__rejectGoogle) return new Response(JSON.stringify({ error: 'Verifikasi Google gagal. Silakan coba lagi.' }), {status:401});
       const payload = btoa(JSON.stringify({user_id:7,email:'test@gmail.com',exp:Math.floor(Date.now()/1000)+3600}));
       return new Response(JSON.stringify({token:'test.'+payload+'.session',user:{id:7,name:'Google Tester',email:'test@gmail.com'}}), {status:200});
@@ -166,6 +167,12 @@ try {
   await evaluate(`window.__rejectGoogle = false; document.querySelector('.google-auth-button button').click()`)
   await waitFor(`location.pathname === '/dashboard'`)
   await evaluate('localStorage.clear()')
+
+  await visit('http://127.0.0.1:5197/login')
+  await waitFor(`document.querySelector('.google-auth-button button') !== null`)
+  await evaluate(`window.__legacyGoogleBackend = true; document.querySelector('.google-auth-button button').click()`)
+  await waitFor(`document.querySelector('.error-message')?.textContent.includes('Login Google belum tersedia saat ini') && !document.querySelector('.primary-button').disabled`)
+  assert.equal(await evaluate('localStorage.getItem("token")'), null)
 
   await visit('http://127.0.0.1:5197/login?sdk=fail')
   await waitFor(`document.querySelector('.google-auth-fallback')?.textContent.includes('Coba muat')`)

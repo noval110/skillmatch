@@ -1,5 +1,5 @@
 .google-auth {
-  margin-bottom: 20px;
+  margin-top: 20px;
 }
 
 .google-auth-card {
@@ -67,6 +67,7 @@
 
 .google-auth-control {
   width: 100%;
+  overflow: hidden;
   min-height: 48px;
   padding: 4px;
   border: 1px solid rgb(255 255 255 / 12%);
@@ -164,7 +165,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 21px;
+  margin-bottom: 16px;
   color: var(--muted);
   font-size: 10px;
 }

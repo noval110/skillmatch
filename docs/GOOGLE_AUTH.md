@@ -70,6 +70,45 @@ Aturan identitas mengikuti [dokumentasi verifikasi Google](https://developers.go
 
 ## Uji setelah Client ID tersedia
 
+### Jika muncul Error 400: origin_mismatch
+
+Error ini muncul ketika origin website belum terdaftar pada OAuth Client yang
+dipakai frontend. Untuk domain produksi SkillMatch saat ini:
+
+1. Buka **Google Auth Platform → Clients** di Google Cloud Console.
+2. Pilih client **Web application** dengan Client ID yang sama seperti
+   `VITE_GOOGLE_CLIENT_ID` pada environment Vercel.
+3. Pada **Authorized JavaScript origins**, tambahkan tepat
+   `https://skillmatch-noval7.vercel.app`, tanpa `/login`, `/register`, atau `/api`.
+4. Klik **Save**, tunggu perubahan berlaku, lalu muat ulang website dan coba lagi.
+
+Origin produksi ini harus terdaftar di **Authorized JavaScript origins**.
+Konfigurasi **Authorized redirect URIs** saja tidak mengizinkan origin website.
+Jika memakai domain lain, tambahkan origin domain tersebut juga. Mengubah daftar
+origin pada client yang sama tidak memerlukan perubahan kode aplikasi. Jika Client
+ID diganti, perbarui environment frontend dan backend, lalu redeploy keduanya.
+
+Lihat [penjelasan origin_mismatch dari Google](https://developers.google.com/identity/protocols/oauth2/javascript-implicit-flow#origin-mismatch).
+
+### Alur pengujian
+
+Jika setelah memilih akun Google muncul **Missing Authorization header**, periksa
+versi backend yang benar-benar dipakai oleh `VITE_API_URL`. Rute login Google
+adalah rute publik; pengguna tidak perlu memiliki token SkillMatch sebelumnya.
+Backend lama dapat mengarahkan rute Google yang belum tersedia ke middleware
+fallback komunitas sehingga menghasilkan error tersebut.
+
+- Deploy backend terbaru yang mendaftarkan `POST /api/auth/google` di `main.go`.
+- Pastikan `GOOGLE_CLIENT_ID` pada backend sama dengan `VITE_GOOGLE_CLIENT_ID`
+  pada frontend. Restart backend setelah mengubah environment.
+- Dengan backend terbaru dan Client ID terpasang, request JSON kosong `{}` ke
+  rute tersebut harus menghasilkan **400** (`Kredensial Google diperlukan`),
+  tanpa header Authorization. Jika Client ID belum terpasang, hasilnya **503**.
+- Jika respons masih **401 Missing Authorization header**, backend yang dituju
+  belum menyediakan rute publik tersebut atau masih memakai versi lama.
+- Redeploy frontend agar posisi tombol Google terbaru dan pesan error yang lebih
+  jelas terpasang di Vercel.
+
 1. Buka `/register`, pilih experience level, lalu **Daftar dengan Google**.
    Pastikan masuk ke dashboard dan profil berisi nama serta email Google.
 2. Logout, lalu masuk melalui **Masuk dengan Google** di `/login`. Pastikan akun,

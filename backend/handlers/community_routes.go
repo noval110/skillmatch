@@ -12,12 +12,15 @@ import (
 )
 
 func RegisterCommunityRoutes(e *echo.Echo, pool *pgxpool.Pool) {
-	api := e.Group("/api", auth.AuthMiddleware)
+	// Protect registered handlers, not the group's wildcard fallback. Otherwise
+	// missing public endpoints (e.g. Google login on an older server) return a
+	// misleading 401 instead of 404.
+	api := e.Group("/api")
 	wrap := func(fn func(echo.Context, *pgxpool.Pool) error) echo.HandlerFunc {
-		return func(c echo.Context) error {
+		return auth.AuthMiddleware(func(c echo.Context) error {
 			c.Response().Header().Set("Cache-Control", "private, no-store")
 			return fn(c, pool)
-		}
+		})
 	}
 	api.GET("/notifications", wrap(GetNotifications))
 	api.GET("/notifications/unread-count", wrap(GetUnreadCount))

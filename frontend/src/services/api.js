@@ -83,6 +83,18 @@ export const loginWithGoogle = (credential, experienceLevel = 'beginner') =>
     auth: false,
     body: { credential, experience_level: experienceLevel },
     errorMessage: 'Gagal masuk dengan Google. Silakan coba lagi.',
+  }).catch((error) => {
+    if (
+      error.status === 404 ||
+      error.status === 405 ||
+      (error.status === 401 && error.message === 'Missing Authorization header')
+    ) {
+      throw new ApiError(
+        'Login Google belum tersedia saat ini. Silakan gunakan email dan password.',
+        error.status,
+      )
+    }
+    throw error
   })
 
 export const registerUser = (
